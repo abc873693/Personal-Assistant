@@ -3,33 +3,29 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_note"
+            android:icon="@drawable/ic_assignment_black"
+            android:title="@string/title_note" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_schedule"
+            android:icon="@drawable/ic_perm_contact_calendar_black"
+            android:title="@string/title_schedule" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/nav_money_management"
+            android:icon="@drawable/ic_euro_symbol_black"
+            android:title="@string/title_money_management" />
         <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_restaurant"
+            android:icon="@drawable/ic_restaurant_black"
+            android:title="@string/title_restaurant" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/title_else">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_setting"
+                android:icon="@drawable/ic_settings_black"
+                android:title="@string/action_settings" />
         </menu>
     </item>
 
