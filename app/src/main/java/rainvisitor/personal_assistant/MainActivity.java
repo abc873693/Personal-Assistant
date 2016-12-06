@@ -18,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -35,8 +37,10 @@ public class MainActivity extends AppCompatActivity
         RestaurantFragment.OnFragmentInteractionListener,
         SchedulesFragment.OnFragmentInteractionListener,
         MoneyFragment.OnFragmentInteractionListener,
-        StartFragment.OnFragmentInteractionListener{
+        StartFragment.OnFragmentInteractionListener {
     FrameLayout frameLayout;
+    public ImageView user_image;
+    public TextView user_name, user_email;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -82,6 +86,12 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        //LinearLayout navHeader =(LinearLayout) LayoutInflater.from(this).inflate(R.layout.nav_header_main, null);
+        //navigationView.addHeaderView(navHeader);
+        View headerView = navigationView.getHeaderView(0);
+        user_image = (ImageView) headerView.findViewById(R.id.imageView_userImage);
+        user_name = (TextView) headerView.findViewById(R.id.txt_userName);
+        user_email = (TextView) headerView.findViewById(R.id.txt_userEmail);
         changeContent(0);
     }
 

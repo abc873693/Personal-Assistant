@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "371690724241",
+    "firebase_url": "https://personal-assistant-90d22.firebaseio.com",
+    "project_id": "personal-assistant-90d22",
+    "storage_bucket": "personal-assistant-90d22.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:371690724241:android:261169ff9d40b036",
+        "android_client_info": {
+          "package_name": "rainvisitor.personal_assistant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "371690724241-d4lfrhvf8ji6k60dolg8ei81sd8gbo31.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "rainvisitor.personal_assistant",
+            "certificate_hash": "7ACD833FA7C2A86D11F6F203C133C302301353F4"
+          }
+        },
+        {
+          "client_id": "371690724241-tqkpgikq4r5e8v2uupfkvgq3veemrkf1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5TNVW97SO_nc36XpOVFIkh1MlR6TsqKA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "371690724241-tqkpgikq4r5e8v2uupfkvgq3veemrkf1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
