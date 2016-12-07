@@ -93,6 +93,15 @@ public class MainActivity extends AppCompatActivity
         user_name = (TextView) headerView.findViewById(R.id.txt_userName);
         user_email = (TextView) headerView.findViewById(R.id.txt_userEmail);
         changeContent(0);
+        Intent intent = new Intent(MainActivity.this, FirebaseMessagingService.class);
+        startService(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        /*Intent intent = new Intent(MainActivity.this, FirebaseMessagingService.class);
+        stopService(intent);*/
     }
 
     @Override
