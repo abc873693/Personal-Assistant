@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -22,12 +21,12 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     @Override
     public void onStart(Intent intent, int startId) {
-        Toast.makeText(this, "Service start", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Service start", Toast.LENGTH_SHORT).show();
     }
 
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this, "Service stop", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Service stop", Toast.LENGTH_SHORT).show();
     }
 
     @Override

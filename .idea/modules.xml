@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Personal-Assistant.iml" filepath="$PROJECT_DIR$/Personal-Assistant.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dom4j-master/dom4j-master.iml" filepath="$PROJECT_DIR$/dom4j-master/dom4j-master.iml" />
     </modules>
   </component>
 </project>
