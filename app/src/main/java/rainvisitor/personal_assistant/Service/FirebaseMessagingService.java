@@ -1,13 +1,14 @@
-package rainvisitor.personal_assistant;
+package rainvisitor.personal_assistant.Service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.google.firebase.messaging.RemoteMessage;
+
+import rainvisitor.personal_assistant.R;
 
 import static com.google.android.gms.internal.zzs.TAG;
 
@@ -17,11 +18,6 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
     public FirebaseMessagingService() {
 
-    }
-
-    @Override
-    public void onStart(Intent intent, int startId) {
-        //Toast.makeText(this, "Service start", Toast.LENGTH_SHORT).show();
     }
 
     public void onDestroy() {

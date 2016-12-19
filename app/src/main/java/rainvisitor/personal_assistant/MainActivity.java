@@ -24,8 +24,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
@@ -43,6 +44,7 @@ import rainvisitor.personal_assistant.Drawer.NotesFragment;
 import rainvisitor.personal_assistant.Drawer.RestaurantFragment;
 import rainvisitor.personal_assistant.Drawer.SchedulesFragment;
 import rainvisitor.personal_assistant.Drawer.StartFragment;
+import rainvisitor.personal_assistant.Service.FirebaseMessagingService;
 
 import static android.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE;
 
@@ -58,6 +60,8 @@ public class MainActivity extends AppCompatActivity
     public TextView user_name, user_email;
     private FloatingActionButton fab;
     private int CurrentFragment = 0;
+    public static final MediaType MEDIA_TYPE_MARKDOWN
+            = MediaType.parse("application/xml; charset=utf-8");
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -89,14 +93,14 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
                 intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "請說話..."); //語音辨識 Dialog 上要顯示的提示文字
-                startActivityForResult(intent, 1);*/
+                startActivityForResult(intent, 1);
                 if (CurrentFragment == 0) new AsyncGetCKIP().execute("安安你好");
                 else if(CurrentFragment == 2) {
-                    Intent intent = new Intent(MainActivity.this, AddScheduleActivity.class);
-                    startActivity(intent);
+                    Intent Schedule_intent = new Intent(MainActivity.this, AddScheduleActivity.class);
+                    startActivity(Schedule_intent);
                 }
             }
         });
@@ -241,59 +245,34 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected String doInBackground(String... params) {
             try {
-                String data = "<?xml version=\"1.0\" ?>" +
+                String postBody =
                         "<wordsegmentation version=\"0.1\">" +
                         "<option showcategory=\"1\" />" +
                         "<authentication username=\"abc873693\" password=\"rain05081620\" />" +
                         "<text>" + params[0] + "</text>" +
                         "</wordsegmentation>";
-                /*URL url = new URL("http://"+HOST_IP+":"+PORT);
-                //ignore https certificate validation |忽略 https 证书验证
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setReadTimeout(5000);
-                conn.setConnectTimeout(10000);
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter osw = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                osw.write(data);
-                osw.flush();
-                osw.close();
-                os.flush();
-                os.close();
-                int responseCode = conn.getResponseCode();
-                if (responseCode == 200) {
-                    InputStream is = conn.getInputStream();
-                    String state = getStringFromInputStream(is);
-                    return state;
-                } else {
-                    return ("Connect Error!!");
-                }*/
                 OkHttpClient okHttpClient = new OkHttpClient();
                 okHttpClient.setConnectTimeout(30, TimeUnit.SECONDS);
                 okHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
-                RequestBody formBody = new FormEncodingBuilder()
-                        .add("version", "0.1")
-                        .add("showcategory", "1")
-                        .add("username", "abc873693")
-                        .add("password", "rain05081620")
-                        .add("text", params[0])
-                        .build();
+                RequestBody body = RequestBody.create(MEDIA_TYPE_MARKDOWN, postBody);
                 Request request = new Request.Builder()
                         .url(url)
-                        .post(formBody)
+                        .post(body)
+                        .addHeader("Content-Type", "application/xml; charset=utf-8") //Notice this request has header if you don't need to send a header just erase this part
                         .build();
-                Response response = okHttpClient.newCall(request).execute();
-                okHttpClient.newCall(request).enqueue(new Callback() {
+                Call call = okHttpClient.newCall(request);
+                call.enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
+                        Log.e("HttpService", "onFailure() Request was: " );
 
+                        e.printStackTrace();
                     }
 
                     @Override
                     public void onResponse(Response response) throws IOException {
-
+                        String str = response.body().string();
+                        Log.e("response ", "onResponse(): " + str );
                     }
                 });
             } catch (Exception e) {
