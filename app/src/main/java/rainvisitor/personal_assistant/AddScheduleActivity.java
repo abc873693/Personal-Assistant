@@ -1,10 +1,10 @@
 package rainvisitor.personal_assistant;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-public class AddScheduleActivity extends Activity {
+public class AddScheduleActivity extends AppCompatActivity {
     private android.support.v7.widget.Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

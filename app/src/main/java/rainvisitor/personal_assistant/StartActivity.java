@@ -1,12 +1,12 @@
 package rainvisitor.personal_assistant;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -27,7 +27,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import rainvisitor.personal_assistant.Database.SP_Service;
 import rainvisitor.personal_assistant.libs.Utils;
 
-public class StartActivity extends Activity {
+public class StartActivity extends AppCompatActivity {
     private static final String AUTH_TAG = "Auth";
     private static final int RC_SIGN_IN = 1;
     private Context context ;

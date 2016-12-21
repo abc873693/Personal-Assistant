@@ -1,11 +1,11 @@
 package rainvisitor.personal_assistant;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -16,7 +16,7 @@ import rainvisitor.personal_assistant.DetailScheduleFragmet.MainFragment;
 
 import static android.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE;
 
-public class DetailScheduleActivity extends Activity implements
+public class DetailScheduleActivity extends AppCompatActivity implements
         MainFragment.OnFragmentInteractionListener
         , AddFragment.OnFragmentInteractionListener
         , ContentFragment.OnFragmentInteractionListener {
@@ -58,7 +58,6 @@ public class DetailScheduleActivity extends Activity implements
                         startActivity(Intent.createChooser(sharingIntent, "分享至"));*/
                         break;
                     case R.id.action_add:
-                        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
                         changeContent(FRAGMENT.add);
                         break;
                     default:
@@ -83,31 +82,62 @@ public class DetailScheduleActivity extends Activity implements
                         });
                 snackbar.show();*/
                 changeContent(FRAGMENT.main);
-                toolbar.setNavigationIcon(null);
+
             }
         });
     }
 
     @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        Log.e("onBackPressed",CurrentFragment.toString());
+        switch (CurrentFragment) {
+            case main:
+                finish();
+                break;
+            case content:
+            case add:
+                changeContent(FRAGMENT.main);
+                break;
+            default:
+                super.onBackPressed();
+                break;
+        }
+
+    }
+
+    /*@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            changeContent(FRAGMENT.main);
+            Log.d("onKeyDown",CurrentFragment.toString());
+            switch (CurrentFragment) {
+                case main:
+                    //finish();
+                    break;
+                case content:
+                case add:
+                    changeContent(FRAGMENT.main);
+                    break;
+                default:
+                    break;
+            }
         }
         return false;
-    }
+    }*/
 
     public void changeContent(FRAGMENT position) {
         Fragment fragment = null;
-        CurrentFragment = position;
         switch (position) {
             case main:
                 fragment = new MainFragment().newInstance();
+                toolbar.setNavigationIcon(null);
                 break;
             case content:
                 fragment = new ContentFragment().newInstance();
                 break;
             case add:
                 fragment = new AddFragment().newInstance();
+                toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
                 break;
             default:
 
@@ -119,6 +149,7 @@ public class DetailScheduleActivity extends Activity implements
             fragTrans.replace(R.id.content_main, fragment);
             fragTrans.commit();
         }
+        CurrentFragment = position;
     }
 
 }
