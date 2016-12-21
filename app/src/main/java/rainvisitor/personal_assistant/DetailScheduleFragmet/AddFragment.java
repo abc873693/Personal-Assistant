@@ -35,7 +35,7 @@ public class AddFragment extends Fragment {
      * @return A new instance of fragment AddFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AddFragment newInstance(String param1, String param2) {
+    public AddFragment newInstance(String param1, String param2) {
         AddFragment fragment = new AddFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);

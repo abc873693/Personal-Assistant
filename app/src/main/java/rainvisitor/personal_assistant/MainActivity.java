@@ -47,8 +47,6 @@ import rainvisitor.personal_assistant.Drawer.SchedulesFragment;
 import rainvisitor.personal_assistant.Drawer.StartFragment;
 import rainvisitor.personal_assistant.libs.ImageDownloaderTask;
 
-import static android.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         NotesFragment.OnFragmentInteractionListener,
@@ -243,7 +241,7 @@ public class MainActivity extends AppCompatActivity
         }
         if (fragment != null) {
             FragmentTransaction fragTrans = getFragmentManager().beginTransaction();
-            fragTrans.setTransition(TRANSIT_FRAGMENT_FADE);
+            fragTrans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             fragTrans.replace(R.id.content_main, fragment);
             fragTrans.commit();
         }

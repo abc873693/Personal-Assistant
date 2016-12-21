@@ -4,25 +4,50 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import rainvisitor.personal_assistant.R;
 
-public class MainFragment extends Fragment {
+/**
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link DiscussDetailFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ * Use the {@link DiscussDetailFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class DiscussDetailFragment extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
-    public MainFragment() {
+    public DiscussDetailFragment() {
         // Required empty public constructor
     }
 
-
-    public MainFragment newInstance() {
-        MainFragment fragment = new MainFragment();
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment DiscussDetailFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public  DiscussDetailFragment newInstance(String param1, String param2) {
+        DiscussDetailFragment fragment = new DiscussDetailFragment();
         Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -31,7 +56,8 @@ public class MainFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -39,7 +65,7 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detailschedule_main, container, false);
+        return inflater.inflate(R.layout.fragment_discuss_detail, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -79,36 +105,5 @@ public class MainFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
-
-        public ContactAdapter() {
-            super();
-        }
-
-        @Override
-        public int getItemCount() {
-            return 0;
-        }
-
-        @Override
-        public ContactViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-            return null;
-        }
-        public class ContactViewHolder extends RecyclerView.ViewHolder {
-            public ContactViewHolder(View convertView, final int position) {
-                super(convertView);
-            }
-        }
-
-        @Override
-        public void onBindViewHolder(ContactViewHolder holder, int position) {
-
-        }
-
-
-
     }
 }

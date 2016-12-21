@@ -1,10 +1,18 @@
 package rainvisitor.personal_assistant.libs;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -12,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import rainvisitor.personal_assistant.R;
 
 /**
  * Created by Ray on 2016/12/20.
@@ -23,6 +33,39 @@ public class Utils {
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    public static void openCustomTabs(Context context , Resources resources, String url){
+        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+        Bitmap icon = BitmapFactory
+                .decodeResource(resources, R.drawable.ic_menu_share);
+        builder.setActionButton(icon, "share", Utils.createSharePendingIntent(context, url));
+        builder.setToolbarColor(
+                ContextCompat.getColor(context, R.color.blue_300));
+        CustomTabsIntent customTabsIntent = builder.build();
+        customTabsIntent.launchUrl(context
+                , Uri.parse(url));
+    }
+
+    public static PendingIntent createSharePendingIntent(Context context, String content) {
+        Intent sendIntent = new Intent(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, content);
+        sendIntent.setType("text/plain");
+        return PendingIntent.getActivity(context, 0, sendIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+
+
+    public static Drawable getSelectableItemBackgroundDrawable(Context context) {
+        return ContextCompat.getDrawable(context, getSelectableItemBackgroundResource(context));
+    }
+
+    public static int getSelectableItemBackgroundResource(Context context) {
+        int[] attrs = new int[]{R.attr.selectableItemBackground};
+        TypedArray typedArray = context.obtainStyledAttributes(attrs);
+        int resourceId = typedArray.getResourceId(0, 0);
+        typedArray.recycle();
+        return resourceId;
     }
 
     public static Bitmap downloadBitmap(String url) {
