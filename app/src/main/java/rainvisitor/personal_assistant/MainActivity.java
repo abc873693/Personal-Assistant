@@ -32,19 +32,18 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import rainvisitor.personal_assistant.Database.SP_Service;
 import rainvisitor.personal_assistant.Drawer.MoneyFragment;
 import rainvisitor.personal_assistant.Drawer.NotesFragment;
 import rainvisitor.personal_assistant.Drawer.RestaurantFragment;
 import rainvisitor.personal_assistant.Drawer.SchedulesFragment;
 import rainvisitor.personal_assistant.Drawer.StartFragment;
-import rainvisitor.personal_assistant.Service.FirebaseMessagingService;
+import rainvisitor.personal_assistant.libs.ImageDownloaderTask;
 
 import static android.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE;
 
@@ -93,11 +92,14 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "請說話..."); //語音辨識 Dialog 上要顯示的提示文字
-                startActivityForResult(intent, 1);
-                if (CurrentFragment == 0) new AsyncGetCKIP().execute("安安你好");
+
+                if (CurrentFragment == 0) {
+                    Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                    intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "請說話..."); //語音辨識 Dialog 上要顯示的提示文字
+                    startActivityForResult(intent, 1);
+                    new AsyncGetCKIP().execute("安安你好");
+                }
                 else if(CurrentFragment == 2) {
                     Intent Schedule_intent = new Intent(MainActivity.this, AddScheduleActivity.class);
                     startActivity(Schedule_intent);
@@ -120,8 +122,10 @@ public class MainActivity extends AppCompatActivity
         user_name = (TextView) headerView.findViewById(R.id.txt_userName);
         user_email = (TextView) headerView.findViewById(R.id.txt_userEmail);
         changeContent(0);
-        Intent intent = new Intent(MainActivity.this, FirebaseMessagingService.class);
-        startService(intent);
+        SP_Service sp_service = new SP_Service(MainActivity.this);
+        user_name.setText(sp_service.username_get());
+        user_email.setText(sp_service.userEmail_get());
+        new ImageDownloaderTask(user_image).execute(sp_service.userPhotoURL_get());
     }
 
     @Override
@@ -182,6 +186,7 @@ public class MainActivity extends AppCompatActivity
                 changeContent(4);
                 break;
             case R.id.nav_setting:
+                startActivity(new Intent().setClass(MainActivity.this, DetailScheduleActivity.class));
                 break;
             default:
                 changeContent(0);
@@ -295,19 +300,5 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
         }
-    }
-
-    private static String getStringFromInputStream(InputStream is)
-            throws IOException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int len = -1;
-        while ((len = is.read(buffer)) != -1) {
-            os.write(buffer, 0, len);
-        }
-        is.close();
-        String state = os.toString();
-        os.close();
-        return state;
     }
 }

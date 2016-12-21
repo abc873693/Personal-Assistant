@@ -89,5 +89,7 @@
     <string name="save">save</string>
     <string name="hint_title">Please enter a title</string>
     <string name="hint_content">Please enter content</string>
+    <string name="add">add</string>
+    <string name="share">share</string>
 
 </resources>

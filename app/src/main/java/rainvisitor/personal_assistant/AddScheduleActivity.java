@@ -32,7 +32,7 @@ public class AddScheduleActivity extends Activity {
             }
         });
         // Inflate a menu to be displayed in the toolbar
-        toolbar.inflateMenu(R.menu.schedule_add_menu);
+        toolbar.inflateMenu(R.menu.toolber_add);
         //setSupportActionBar(toolbar);
     }
 

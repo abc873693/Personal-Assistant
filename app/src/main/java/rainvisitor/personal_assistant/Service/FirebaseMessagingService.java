@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.firebase.messaging.RemoteMessage;
@@ -45,6 +46,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             Notification.InboxStyle style = new Notification.InboxStyle();
             style.addLine(remoteMessage.getNotification().getBody());
             style.setSummaryText("內容");
+            long[] vib = { 50, 400, 200, 400, 50, 400 };
             Notification builder =
                     new Notification.Builder(context)
                             .setSmallIcon(R.mipmap.ic_launcher)
@@ -54,6 +56,10 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                             .setLargeIcon(BitmapFactory.decodeResource(
                                     getResources(), R.drawable.ic_notifications))
                             .setStyle(style)
+                            .setVibrate(vib)
+                            .setCategory(NotificationCompat.CATEGORY_PROMO)
+                            .setPriority(Notification.PRIORITY_HIGH)
+                            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                             .build();
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             // 設定小圖示、大圖示、狀態列文字、時間、內容標題、內容訊息和內容額外資訊

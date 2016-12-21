@@ -13,4 +13,6 @@
     <string name="save">存檔</string>
     <string name="hint_title">請輸入標題</string>
     <string name="hint_content">請輸入內容</string>
+    <string name="add">增加</string>
+    <string name="share">分享</string>
 </resources>

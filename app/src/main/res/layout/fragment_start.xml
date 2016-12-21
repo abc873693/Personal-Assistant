@@ -134,10 +134,13 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-        <Button
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="登入"
-            android:id="@+id/btn_sign"/>
+            android:gravity="center"
+            tools:text="version"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:id="@+id/text_version"/>
     </LinearLayout>
 </FrameLayout>

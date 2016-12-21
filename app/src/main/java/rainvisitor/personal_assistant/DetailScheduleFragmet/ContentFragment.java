@@ -52,6 +52,13 @@ public class ContentFragment extends Fragment {
         return fragment;
     }
 
+    public ContentFragment newInstance() {
+        ContentFragment fragment = new ContentFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,1 +1,1 @@
-include ':app', ':dom4j-master'
+include ':app'
