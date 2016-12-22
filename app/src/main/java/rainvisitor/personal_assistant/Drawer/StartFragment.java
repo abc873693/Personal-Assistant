@@ -90,25 +90,7 @@ public class StartFragment extends Fragment {
             }
         });
         textView_version = (TextView) view.findViewById(R.id.text_version);
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("version");
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = "版本:" + dataSnapshot.getValue(String.class);
-                textView_version.setText(value);
-                Log.d(DATABASE_TAG, "Value is: " + value);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(DATABASE_TAG, "Failed to read value.", error.toException());
-            }
-        });
-
+        getFirebaseDatabse();
         return view;
     }
 
@@ -156,6 +138,25 @@ public class StartFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private void getFirebaseDatabse(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("version");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = "版本:" + dataSnapshot.getValue(String.class);
+                textView_version.setText(value);
+                Log.d(DATABASE_TAG, "Value is: " + value);
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(DATABASE_TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
 
 
 }
