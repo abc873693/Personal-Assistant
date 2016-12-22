@@ -42,6 +42,21 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
         context = getApplicationContext();
         relativeLayout = (RelativeLayout) findViewById(R.id.activity_start);
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d(AUTH_TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(AUTH_TAG, "onAuthStateChanged:signed_out");
+                }
+                // ...
+            }
+        };
         CheckNetwork();
     }
 
@@ -59,6 +74,8 @@ public class StartActivity extends AppCompatActivity {
             } else {
                 // Google Sign In failed, update UI appropriately
                 // ...
+                startActivity(new Intent().setClass(StartActivity.this, MainActivity.class));
+                finish();
             }
         }
     }
@@ -101,6 +118,7 @@ public class StartActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
@@ -116,21 +134,6 @@ public class StartActivity extends AppCompatActivity {
                 .requestIdToken(getResources().getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Log.d(AUTH_TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                } else {
-                    // User is signed out
-                    Log.d(AUTH_TAG, "onAuthStateChanged:signed_out");
-                }
-                // ...
-            }
-        };
         mGoogleApiClient = new GoogleApiClient.Builder(StartActivity.this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
