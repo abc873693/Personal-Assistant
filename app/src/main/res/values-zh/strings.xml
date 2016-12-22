@@ -15,4 +15,14 @@
     <string name="hint_content">請輸入內容</string>
     <string name="add">增加</string>
     <string name="share">分享</string>
+    <string name="hint_location">請輸入位址</string>
+    <string name="hint_time_start">請輸入開始時間</string>
+    <string name="hint_time_end">請輸入結束時間</string>
+    <string name="hint_time">時間</string>
+    <string name="hint_detailschedule_content_creator">創建者</string>
+    <string name="hint_detailschedule_content_time">時間</string>
+    <string name="hint_detailschedule_content_content">內容</string>
+    <string name="hint_detailschedule_content_cost">花費</string>
+    <string name="hint_detailschedule_content_remark">備註</string>
+    <string name="hint_detailschedule_content_picture">相片</string>
 </resources>

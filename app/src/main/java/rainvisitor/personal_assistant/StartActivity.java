@@ -74,6 +74,8 @@ public class StartActivity extends AppCompatActivity {
             } else {
                 // Google Sign In failed, update UI appropriately
                 // ...
+                startActivity(new Intent().setClass(StartActivity.this, MainActivity.class));
+                finish();
             }
         }
     }

@@ -91,5 +91,14 @@
     <string name="hint_content">Please enter content</string>
     <string name="add">add</string>
     <string name="share">share</string>
-
+    <string name="hint_location">Please enter location</string>
+    <string name="hint_time_start">Please enter start time</string>
+    <string name="hint_time_end">Pleas enter end time</string>
+    <string name="hint_time">Time</string>
+    <string name="hint_detailschedule_content_creator">Creator</string>
+    <string name="hint_detailschedule_content_time">Time</string>
+    <string name="hint_detailschedule_content_content">Content</string>
+    <string name="hint_detailschedule_content_cost">Cost</string>
+    <string name="hint_detailschedule_content_remark">Remark</string>
+    <string name="hint_detailschedule_content_picture">Picture</string>
 </resources>

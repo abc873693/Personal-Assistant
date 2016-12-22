@@ -15,6 +15,7 @@ public class AddScheduleActivity extends AppCompatActivity {
     private void initToolbar(){
         toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         // Set an OnMenuItemClickListener to handle menu item clicks
+        toolbar.setTitle("新增行程");
         toolbar.setOnMenuItemClickListener(new android.support.v7.widget.Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {

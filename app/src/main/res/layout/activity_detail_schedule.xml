@@ -22,12 +22,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="AA"
+                android:text="標題"
+                android:paddingLeft="15dp"
                 android:textSize="24sp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="sp"
+                android:paddingLeft="15dp"
+                android:text="地點"
                 android:textSize="24sp"/>
         </LinearLayout>
     </android.support.design.widget.AppBarLayout>
