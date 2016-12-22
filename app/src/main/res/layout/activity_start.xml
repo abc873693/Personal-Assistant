@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_start"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blue_200"
     tools:context="rainvisitor.personal_assistant.StartActivity">
+
+    <TextView
+        android:text="使用Ｇｏｏｇｌｅ帳號登入．．．"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView_googlehint"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/common_google_signin_btn_icon_dark"
+        android:id="@+id/imageView_google"
+        android:layout_above="@+id/textView_googlehint"
+        android:layout_alignStart="@+id/textView_googlehint"
+        android:layout_marginBottom="17dp" />
 
 </RelativeLayout>

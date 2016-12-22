@@ -1,13 +1,196 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="rainvisitor.personal_assistant.DetailScheduleFragmet.AddFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:background="@color/grey_100"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/main.appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent" />
+
+
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="1dp"
+            android:background="@color/grey_100"
+            android:orientation="horizontal">
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_title"
+                android:id="@+id/edittext_content"
+                android:gravity="top"
+                android:textSize="24sp"
+                android:padding="12dp"
+                android:background="@color/grey_100"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black_dividers" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:paddingBottom="1dp"
+            android:background="@color/grey_100"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/grey_100"
+                android:padding="5dp"
+                android:src="@drawable/ic_place_black_24dp"
+                android:id="@+id/imageView" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/hint_location"
+                android:id="@+id/textview_location"
+                android:textSize="24sp"
+                android:padding="12dp"
+                android:background="@color/grey_100"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black_dividers"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:paddingBottom="1dp"
+            android:background="@color/grey_100"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="166dp"
+                android:background="@color/grey_100"
+                android:padding="5dp"
+                android:src="@drawable/ic_timer_black_24dp"
+                android:id="@+id/imageView2" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:hint="@string/hint_time_start"
+                        android:textSize="24sp"
+                        android:padding="12dp"
+                        android:background="@color/grey_100"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black_dividers"
+                        android:id="@+id/textview_startdate" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:id="@+id/textview_starttime"
+                        android:hint="@string/hint_time"
+                        android:textSize="24sp"
+                        android:padding="12dp"
+                        android:background="@color/grey_100"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black_dividers"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:hint="@string/hint_time_end"
+                        android:textSize="24sp"
+                        android:padding="12dp"
+                        android:background="@color/grey_100"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black_dividers"
+                        android:id="@+id/textview_enddate" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:hint="@string/hint_time"
+                        android:textSize="24sp"
+                        android:padding="12dp"
+                        android:background="@color/grey_100"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black_dividers"
+                        android:id="@+id/textview_endtime"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"></LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="－－－－－－－－－－－－－－－－－－－－－－－－－－－"
+
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.09"
+            android:weightSum="1">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/ic_add_black"
+                android:id="@+id/imageView_addpicture" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="新增照片"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textAlignment="viewStart"
+                android:paddingTop="6dp"
+                android:id="@+id/textView_newpicture" />
+
+        </LinearLayout>
+    </LinearLayout>
+
 
 </FrameLayout>

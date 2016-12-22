@@ -9,7 +9,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -35,6 +37,8 @@ public class StartActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private GoogleApiClient mGoogleApiClient;
+    private TextView Googlehint;
+    private ImageView Googleimage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +61,23 @@ public class StartActivity extends AppCompatActivity {
                 // ...
             }
         };
+        SetupView();
         CheckNetwork();
+
+        //Todo: Google onClickListener ---未完成
+        Googleimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //登入Google
+            }
+        });
+
+
+    }
+
+    public void SetupView(){
+        Googlehint = (TextView) findViewById(R.id.textView_googlehint);
+        Googleimage = (ImageView) findViewById(R.id.imageView_google);
     }
 
     @Override
