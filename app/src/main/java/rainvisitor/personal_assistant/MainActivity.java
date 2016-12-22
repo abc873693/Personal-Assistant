@@ -55,16 +55,17 @@ public class MainActivity extends AppCompatActivity
         MoneyFragment.OnFragmentInteractionListener,
         StartFragment.OnFragmentInteractionListener {
     FrameLayout frameLayout;
-    public ImageView user_image;
-    public TextView user_name, user_email;
+    private ImageView user_image;
+    private TextView user_name, user_email;
     private FloatingActionButton fab;
     private int CurrentFragment = 0;
-    public static final MediaType MEDIA_TYPE_MARKDOWN
+    private static final MediaType MEDIA_TYPE_MARKDOWN
             = MediaType.parse("application/xml; charset=utf-8");
+    private final int REQUEST_Voice_Recognition = 1;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
+        if (requestCode == REQUEST_Voice_Recognition) {
             if (resultCode == RESULT_OK) {
                 //把所有辨識的可能結果印出來看一看，第一筆是最 match 的。
                 ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
@@ -97,10 +98,9 @@ public class MainActivity extends AppCompatActivity
                     Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                     intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
                     intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "請說話..."); //語音辨識 Dialog 上要顯示的提示文字
-                    startActivityForResult(intent, 1);
+                    startActivityForResult(intent, REQUEST_Voice_Recognition);
                     new AsyncGetCKIP().execute("安安你好");
-                }
-                else if(CurrentFragment == 2) {
+                } else if (CurrentFragment == 2) {
                     Intent Schedule_intent = new Intent(MainActivity.this, AddScheduleActivity.class);
                     startActivity(Schedule_intent);
                 }
@@ -268,10 +268,10 @@ public class MainActivity extends AppCompatActivity
             try {
                 String postBody =
                         "<wordsegmentation version=\"0.1\">" +
-                        "<option showcategory=\"1\" />" +
-                        "<authentication username=\"abc873693\" password=\"rain05081620\" />" +
-                        "<text>" + params[0] + "</text>" +
-                        "</wordsegmentation>";
+                                "<option showcategory=\"1\" />" +
+                                "<authentication username=\"abc873693\" password=\"rain05081620\" />" +
+                                "<text>" + params[0] + "</text>" +
+                                "</wordsegmentation>";
                 OkHttpClient okHttpClient = new OkHttpClient();
                 okHttpClient.setConnectTimeout(30, TimeUnit.SECONDS);
                 okHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
-                        Log.e("HttpService", "onFailure() Request was: " );
+                        Log.e("HttpService", "onFailure() Request was: ");
 
                         e.printStackTrace();
                     }
@@ -293,7 +293,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onResponse(Response response) throws IOException {
                         String str = response.body().string();
-                        Log.e("response ", "onResponse(): " + str );
+                        Log.e("response ", "onResponse(): " + str);
                     }
                 });
             } catch (Exception e) {

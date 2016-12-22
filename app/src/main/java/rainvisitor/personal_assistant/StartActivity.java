@@ -30,7 +30,7 @@ import rainvisitor.personal_assistant.libs.Utils;
 public class StartActivity extends AppCompatActivity {
     private static final String AUTH_TAG = "Auth";
     private static final int RC_SIGN_IN = 1;
-    private Context context ;
+    private Context context;
     private RelativeLayout relativeLayout;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -41,12 +41,30 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
         context = getApplicationContext();
-        relativeLayout = (RelativeLayout)findViewById(R.id.activity_start);
+        relativeLayout = (RelativeLayout) findViewById(R.id.activity_start);
         CheckNetwork();
     }
 
-    private void CheckNetwork(){
-        if(!Utils.isNetworkConnected(context)){
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = result.getSignInAccount();
+                firebaseAuthWithGoogle(account);
+            } else {
+                // Google Sign In failed, update UI appropriately
+                // ...
+            }
+        }
+    }
+
+    private void CheckNetwork() {
+        if (!Utils.isNetworkConnected(context)) {
             Snackbar snackbar = Snackbar
                     .make(relativeLayout, "無可用的網路", Snackbar.LENGTH_INDEFINITE)
                     .setAction("確定", new View.OnClickListener() {
@@ -56,13 +74,12 @@ public class StartActivity extends AppCompatActivity {
                         }
                     });
             snackbar.show();
-        }
-        else {
+        } else {
             new LoginTask().execute();
         }
     }
 
-    private class LoginTask extends AsyncTask<String,String,String>{
+    private class LoginTask extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute() {
@@ -122,24 +139,6 @@ public class StartActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()) {
-                // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
-            } else {
-                // Google Sign In failed, update UI appropriately
-                // ...
-            }
-        }
-    }
-
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(AUTH_TAG, "firebaseAuthWithGoogle:" + acct.getId() + "N:" + acct.getEmail() + acct.getFamilyName() + acct.getGivenName());
         SP_Service sp_service = new SP_Service(context);
@@ -167,8 +166,7 @@ public class StartActivity extends AppCompatActivity {
                                         }
                                     });
                             snackbar.show();
-                        }
-                        else{
+                        } else {
                             startActivity(new Intent().setClass(StartActivity.this, MainActivity.class));
                             finish();
                         }
