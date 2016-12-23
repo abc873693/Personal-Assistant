@@ -5,6 +5,7 @@ package rainvisitor.personal_assistant.Models;
  */
 
 public class ScheduleModel {
+    public String uid;
     public String title;
     public String date_begin;
     public String date_end;

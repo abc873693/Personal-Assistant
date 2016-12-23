@@ -2,6 +2,7 @@ package rainvisitor.personal_assistant.Drawer;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -22,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import rainvisitor.personal_assistant.DetailScheduleActivity;
 import rainvisitor.personal_assistant.Models.ScheduleModel;
 import rainvisitor.personal_assistant.R;
 
@@ -44,8 +46,8 @@ public class SchedulesFragment extends Fragment {
     private static final String USER_UID = "4wCRmeLUdtUBREByNn1GHFdFsnl2";
     private Context context;
     private RecyclerView recyclerView;
-    private ArrayList<ScheduleModel> lists =new ArrayList<>();
-    private ArrayList<String> activitys =new ArrayList<>();
+    private ArrayList<ScheduleModel> lists = new ArrayList<>();
+    private ArrayList<String> activitys = new ArrayList<>();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -80,7 +82,7 @@ public class SchedulesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_schedules, container, false);
         context = getActivity();
-        recyclerView = (RecyclerView)view.findViewById(listView);
+        recyclerView = (RecyclerView) view.findViewById(listView);
         getUserActivity();
         // Inflate the layout for this fragment
         return view;
@@ -118,19 +120,19 @@ public class SchedulesFragment extends Fragment {
     private void getUserActivity() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("users");
-        Log.e(DATABASE_TAG,"getUserActivity...");
+        Log.e(DATABASE_TAG, "getUserActivity...");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 activitys.clear();
                 Log.e(DATABASE_TAG, "onDataChange");
-                for (DataSnapshot ds : dataSnapshot.child(USER_UID).child("activtys").getChildren() ){
+                for (DataSnapshot ds : dataSnapshot.child(USER_UID).child("activtys").getChildren()) {
                     //ScheduleModel model = new ScheduleModel();
                     activitys.add(ds.child("uid").getValue().toString());
-                    Log.e(DATABASE_TAG,ds.child("uid").getValue().toString());
+                    Log.e(DATABASE_TAG, ds.child("uid").getValue().toString());
                     //adapter.add(ds.child("name").getValue().toString());
                 }
-                if(activitys.size()!=0){
+                if (activitys.size() != 0) {
                     getActivityData();
                 }
             }
@@ -146,19 +148,20 @@ public class SchedulesFragment extends Fragment {
     private void getActivityData() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("activity");
-        Log.e(DATABASE_TAG,"getUserActivity...");
+        Log.e(DATABASE_TAG, "getUserActivity...");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 lists.clear();
                 Log.e(DATABASE_TAG, "onDataChange");
-                for(String uid : activitys){
+                for (String uid : activitys) {
                     ScheduleModel model = new ScheduleModel();
                     DataSnapshot ds = dataSnapshot.child(uid);
                     model.title = ds.child("title").getValue().toString();
-                    model.date_begin = ds.child("time").child("begin").getValue().toString() ;
+                    model.date_begin = ds.child("time").child("begin").getValue().toString();
                     model.date_end = ds.child("time").child("end").getValue().toString();
                     model.content = ds.child("content").getValue().toString();
+                    model.uid = uid;
                     Log.e(DATABASE_TAG, "Value" + ds.getValue().toString());
                     Log.e(DATABASE_TAG, uid + " title=" + model.title);
                     lists.add(model);
@@ -197,6 +200,16 @@ public class SchedulesFragment extends Fragment {
             holder.textView_title.setText(lists.get(position).title);
             holder.textView_time.setText(lists.get(position).date_begin + "到" + lists.get(position).date_end);
             holder.textView_content.setText(lists.get(position).content);
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int itemPosition = recyclerView.getChildLayoutPosition(view);
+                    Log.d("cardView onClick","itemPosition="+itemPosition);
+                    Intent intent = new Intent(context, DetailScheduleActivity.class);
+                    intent.putExtra("activity_uid", lists.get(itemPosition).uid);
+                    startActivity(intent);
+                }
+            });
         }
 
         @Override

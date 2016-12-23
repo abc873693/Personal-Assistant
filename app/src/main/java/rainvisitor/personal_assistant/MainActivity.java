@@ -26,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.MediaType;
@@ -123,9 +125,11 @@ public class MainActivity extends AppCompatActivity
         user_email = (TextView) headerView.findViewById(R.id.txt_userEmail);
         changeContent(0);
         SP_Service sp_service = new SP_Service(MainActivity.this);
-        user_name.setText(sp_service.username_get());
-        user_email.setText(sp_service.userEmail_get());
-        new ImageDownloaderTask(user_image).execute(sp_service.userPhotoURL_get());
+        if(sp_service.getLoginState()) {
+            user_name.setText(sp_service.username_get());
+            user_email.setText(sp_service.userEmail_get());
+            new ImageDownloaderTask(user_image).execute(sp_service.userPhotoURL_get());
+        }
     }
 
     @Override
@@ -202,7 +206,7 @@ public class MainActivity extends AppCompatActivity
                 changeContent(4);
                 break;
             case R.id.nav_setting:
-                startActivity(new Intent().setClass(MainActivity.this, DetailScheduleActivity.class));
+                startActivity(new Intent().setClass(MainActivity.this, SettingActivity.class));
                 break;
             default:
                 changeContent(0);
@@ -234,6 +238,24 @@ public class MainActivity extends AppCompatActivity
                 break;
             case 4:
                 fragment = new RestaurantFragment().newInstance("找餐廳", "");
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    // Name, email address, and profile photo Url
+                    String name = user.getDisplayName();
+                    String email = user.getEmail();
+                    Uri photoUrl = user.getPhotoUrl();
+
+                    // The user's ID, unique to the Firebase project. Do NOT use this value to
+                    // authenticate with your backend server, if you have one. Use
+                    // FirebaseUser.getToken() instead.
+                    String uid = user.getUid();
+                    Log.e("getCurrentUser","uid = "  + uid +"  name = "  + name +"  email = "  + email +"  photoUrl = "  + photoUrl );
+                }
+                FirebaseAuth.getInstance().signOut();
+                SP_Service sp_service = new SP_Service(MainActivity.this);
+                sp_service.ClearUserData();
+                startActivity(new Intent().setClass(MainActivity.this, StartActivity.class));
+                finish();
                 break;
             default:
 

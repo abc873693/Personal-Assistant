@@ -1,9 +1,9 @@
 package rainvisitor.personal_assistant.DetailScheduleFragmet;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,15 +14,18 @@ import rainvisitor.personal_assistant.R;
 public class MainFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
+    private String UID;
+    private Context context;
 
     public MainFragment() {
         // Required empty public constructor
     }
 
 
-    public MainFragment newInstance() {
+    public MainFragment newInstance(String uid) {
         MainFragment fragment = new MainFragment();
         Bundle args = new Bundle();
+        UID = uid;
         fragment.setArguments(args);
         return fragment;
     }
@@ -30,16 +33,16 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detailschedule_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_detailschedule_main, container, false);
+        context = getActivity();
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

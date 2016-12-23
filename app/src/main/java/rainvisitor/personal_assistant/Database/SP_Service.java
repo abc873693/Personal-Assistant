@@ -13,6 +13,7 @@ public class SP_Service {
     private final String USERNAME = "username";
     private final String USEREMAIL = "user_email";
     private final String USERPHOTOURL = "user_photoURL";
+    private final String LOGINSTATE = "login_state";
 
     public SP_Service(Context context){
         data = context.getSharedPreferences("data", 0);
@@ -38,5 +39,20 @@ public class SP_Service {
 
     public String userPhotoURL_get(){
         return data.getString(USERPHOTOURL,"");
+    }
+
+    public void setLoginState(Boolean state){
+        data.edit().putBoolean(LOGINSTATE, state).apply();
+    }
+
+    public  Boolean getLoginState(){
+        return data.getBoolean(LOGINSTATE,false);
+    }
+
+    public void ClearUserData(){
+        data.edit().putBoolean(LOGINSTATE, false)
+                .putString(USERNAME, "")
+                .putString(USERPHOTOURL, "")
+                .putString(USEREMAIL, "").apply();
     }
 }

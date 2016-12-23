@@ -157,6 +157,13 @@ public class StartActivity extends AppCompatActivity {
         mGoogleApiClient = new GoogleApiClient.Builder(StartActivity.this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+        /*Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
+            @Override
+            public void onResult(@NonNull Status status) {
+
+            }
+        });
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient);*/
         mAuth.addAuthStateListener(mAuthListener);
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -168,6 +175,7 @@ public class StartActivity extends AppCompatActivity {
         sp_service.username_set(acct.getFamilyName() + acct.getGivenName());
         sp_service.userEmail_set(acct.getEmail());
         sp_service.userPhotoURL_set(acct.getPhotoUrl() + "");
+        sp_service.setLoginState(true);
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(StartActivity.this, new OnCompleteListener<AuthResult>() {

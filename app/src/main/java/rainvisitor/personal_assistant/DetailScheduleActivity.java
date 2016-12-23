@@ -29,13 +29,19 @@ public class DetailScheduleActivity extends AppCompatActivity implements
     private android.support.v7.widget.Toolbar toolbar;
     private LinearLayout linearLayout;
     private FRAGMENT CurrentFragment = FRAGMENT.main;
+    private String current_activity_uid ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_schedule);
+        if (getIntent().getExtras() != null) {
+            current_activity_uid = getIntent().getExtras().getString("activity_uid");
+        }
+        else current_activity_uid = "null";
         linearLayout = (LinearLayout) findViewById(R.id.activity_detail_schedule);
         initToolbar();
+        changeContent(FRAGMENT.main);
     }
 
     @Override
@@ -129,7 +135,7 @@ public class DetailScheduleActivity extends AppCompatActivity implements
         Fragment fragment = null;
         switch (position) {
             case main:
-                fragment = new MainFragment().newInstance();
+                fragment = new MainFragment().newInstance(current_activity_uid);
                 toolbar.setNavigationIcon(null);
                 break;
             case content:
