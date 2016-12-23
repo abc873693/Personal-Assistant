@@ -21,8 +21,8 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/common_google_signin_btn_icon_dark"
         android:id="@+id/imageView_google"
+        android:layout_marginBottom="17dp"
         android:layout_above="@+id/textView_googlehint"
-        android:layout_alignStart="@+id/textView_googlehint"
-        android:layout_marginBottom="17dp" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
