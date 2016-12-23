@@ -45,6 +45,7 @@ dependencies {
     compile 'com.google.firebase:firebase-database:10.0.1'
     compile 'com.daimajia.swipelayout:library:1.2.0@aar'
     compile 'com.google.firebase:firebase-storage:10.0.1'
+    compile 'com.wdullaer:materialdatetimepicker:3.0.0'
     testCompile 'junit:junit:4.12'
 }
 

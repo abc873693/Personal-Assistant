@@ -15,15 +15,99 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
-public class AddScheduleActivity extends AppCompatActivity {
+import java.util.Calendar;
+
+public class AddScheduleActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener{
+    private long count = 0;
     private android.support.v7.widget.Toolbar toolbar;
+    private EditText editText_title, editText_content;
+    private TextView textView_location, textView_dateStart, textView_timeStart, textView_dateEnd, textView_timeEnd;
+    private LinearLayout linearLayout;
+    private Calendar now ;
+    private int current_date = 0 , current_time = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_schedule);
         initToolbar();
+        initView();
+        now = Calendar.getInstance();
+        String date = now.get(Calendar.YEAR) + "年" +now.get(Calendar.MONTH) + "月" + now.get(Calendar.DAY_OF_MONTH) + "日" ;
+        String timeS = now.get(Calendar.HOUR_OF_DAY) + ":" +now.get(Calendar.MINUTE);
+        String timeE = now.get(Calendar.HOUR_OF_DAY) + ":" +now.get(Calendar.MINUTE);
+        textView_dateStart.setText(date);
+        textView_dateEnd.setText(date);
+        textView_timeStart.setText(timeS);
+        textView_timeEnd.setText(timeE);
+        textView_dateStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                now = Calendar.getInstance();
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        AddScheduleActivity.this,
+                        now.get(Calendar.YEAR),
+                        now.get(Calendar.MONTH),
+                        now.get(Calendar.DAY_OF_MONTH)
+                );
+                current_date = 1;
+                dpd.show(getFragmentManager(), "Datepickerdialog");
+            }
+        });
+        textView_dateEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                now = Calendar.getInstance();
+                DatePickerDialog dpd = DatePickerDialog.newInstance(
+                        AddScheduleActivity.this,
+                        now.get(Calendar.YEAR),
+                        now.get(Calendar.MONTH),
+                        now.get(Calendar.DAY_OF_MONTH)
+                );
+                current_date = 2;
+                dpd.show(getFragmentManager(), "Datepickerdialog");
+            }
+        });
+        textView_timeStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                now = Calendar.getInstance();
+                TimePickerDialog tpd = TimePickerDialog.newInstance(
+                        AddScheduleActivity.this,
+                        now.get(Calendar.HOUR_OF_DAY),
+                        now.get(Calendar.MINUTE),
+                        false);
+                current_time = 1;
+                tpd.show(getFragmentManager(), "Timepickerdialog");
+            }
+        });
+        textView_timeEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                now = Calendar.getInstance();
+                TimePickerDialog tpd = TimePickerDialog.newInstance(
+                        AddScheduleActivity.this,
+                        now.get(Calendar.HOUR_OF_DAY),
+                        now.get(Calendar.MINUTE),
+                        false);
+                current_time = 1;
+                tpd.show(getFragmentManager(), "Timepickerdialog");
+            }
+        });
+    }
+
+    private void initView() {
+        editText_title = (EditText) findViewById(R.id.edittext_title);
+        editText_content = (EditText) findViewById(R.id.edittext_content);
+        textView_location = (TextView) findViewById(R.id.textview_location);
+        textView_dateStart = (TextView) findViewById(R.id.textview_startdate);
+        textView_timeStart = (TextView) findViewById(R.id.textview_starttime);
+        textView_dateEnd = (TextView) findViewById(R.id.textview_enddate);
+        textView_timeEnd = (TextView) findViewById(R.id.textview_endtime);
+        linearLayout = (LinearLayout) findViewById(R.id.linelayout_addschedule);
     }
 
     private void initToolbar() {
@@ -38,7 +122,7 @@ public class AddScheduleActivity extends AppCompatActivity {
                         finish();
                         break;
                     case R.id.action_save:
-                        saveActivity();
+                        saveSchedule();
                         break;
                     default:
                         break;
@@ -51,9 +135,40 @@ public class AddScheduleActivity extends AppCompatActivity {
         //setSupportActionBar(toolbar);
     }
 
-    public long count = 0;
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        String date = +dayOfMonth+"/"+(++monthOfYear)+"/"+year;
+        Log.e("onDateSet",view.toString());
+        switch (current_date){
+            case 1:
+                textView_dateStart.setText(date);
+                break;
+            case 2:
+                textView_dateEnd.setText(date);
+                break;
+            default:
+                break;
+        }
+    }
 
-    private void saveActivity() {
+    public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
+        String hourString = hourOfDay < 10 ? "0"+hourOfDay : ""+hourOfDay;
+        String minuteString = minute < 10 ? "0"+minute : ""+minute;
+        String secondString = second < 10 ? "0"+second : ""+second;
+        String time = hourString+":"+minuteString;
+        switch (current_time){
+            case 1:
+                textView_timeStart.setText(time);
+                break;
+            case 2:
+                textView_timeEnd.setText(time);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void saveSchedule() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -64,19 +179,13 @@ public class AddScheduleActivity extends AppCompatActivity {
                     Log.e("count", count + "");
                 }
                 DatabaseReference mDatabase;
-                EditText title = (EditText) findViewById(R.id.edittext_title);
-                EditText content = (EditText) findViewById(R.id.edittext_content);
-                TextView location = (TextView) findViewById(R.id.textview_location);
-                TextView startdate = (TextView) findViewById(R.id.textview_startdate);
-                TextView starttime = (TextView) findViewById(R.id.textview_starttime);
-                TextView enddate = (TextView) findViewById(R.id.textview_enddate);
-                TextView endtime = (TextView) findViewById(R.id.textview_endtime);
+
                 mDatabase = FirebaseDatabase.getInstance().getReference();
-                if (location.getText() + "" == "" || content.getText() + "" == "" || title.getText() + "" == "" ||
-                        startdate.getText() + "" == "" || starttime.getText() + "" == "" || enddate.getText() + "" == "" || endtime.getText() + "" == "") {
-                    LinearLayout addschedule = (LinearLayout) findViewById(R.id.linelayout_addschedule);
+                if (textView_location.getText() + "" == "" || editText_content.getText() + "" == "" || editText_title.getText() + "" == "" ||
+                        textView_dateStart.getText() + "" == "" || textView_timeStart.getText() + "" == "" || textView_dateEnd.getText() + "" == "" || textView_timeEnd.getText() + "" == "") {
+
                     final Snackbar snackbar = Snackbar
-                            .make(addschedule, "請物留空", Snackbar.LENGTH_INDEFINITE)
+                            .make(linearLayout, "請物留空", Snackbar.LENGTH_INDEFINITE)
                             .setAction("確定", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -85,11 +194,12 @@ public class AddScheduleActivity extends AppCompatActivity {
                             });
                     snackbar.show();
                 } else {
-                    mDatabase.child("activity").child((count + 1) + "").child("location").setValue(location.getText() + "");
-                    mDatabase.child("activity").child((count + 1) + "").child("content").setValue(content.getText() + "");
-                    mDatabase.child("activity").child((count + 1) + "").child("title").setValue(title.getText() + "");
-                    mDatabase.child("activity").child((count + 1) + "").child("time").child("starttime").setValue(startdate.getText() + " " + starttime.getText() + "");
-                    mDatabase.child("activity").child((count + 1) + "").child("time").child("endtime").setValue(enddate.getText() + " " + endtime.getText() + "");
+                    DatabaseReference dr = mDatabase.child("activity").child((count + 1) + "");
+                    dr.child("textView_location").setValue(textView_location.getText() + "");
+                    dr.child("editText_content").setValue(editText_content.getText() + "");
+                    dr.child("editText_title").setValue(editText_title.getText() + "");
+                    dr.child("time").child("textView_timeStart").setValue(textView_dateStart.getText() + " " + textView_timeStart.getText() + "");
+                    dr.child("time").child("textView_timeEnd").setValue(textView_dateEnd.getText() + " " + textView_timeEnd.getText() + "");
                     finish();
                 }
             }
@@ -99,5 +209,12 @@ public class AddScheduleActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        DatePickerDialog dpd = (DatePickerDialog) getFragmentManager().findFragmentByTag("Datepickerdialog");
+        if(dpd != null) dpd.setOnDateSetListener(this);
     }
 }
