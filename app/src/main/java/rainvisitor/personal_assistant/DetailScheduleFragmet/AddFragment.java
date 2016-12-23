@@ -1,12 +1,16 @@
 package rainvisitor.personal_assistant.DetailScheduleFragmet;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import rainvisitor.personal_assistant.R;
 
@@ -15,6 +19,14 @@ public class AddFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    //Todo: New Items
+    private EditText edit_title;
+    private TextView text_location;
+    private TextView text_startdate;
+    private TextView text_enddate;
+    private TextView text_starttime;
+    private TextView text_endtime;
+    private ImageView image_addpicture;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -63,8 +75,23 @@ public class AddFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detailschedule_add, container, false);
+        FrameLayout fl = (FrameLayout) inflater.inflate(R.layout.fragment_detailschedule_add, container, false);
+        edit_title = (EditText) fl.findViewById(R.id.edittext_title);
+        text_location = (TextView) fl.findViewById(R.id.textview_location);
+        text_startdate = (TextView) fl.findViewById(R.id.textview_startdate);
+        text_enddate = (TextView) fl.findViewById(R.id.textview_enddate);
+        text_starttime = (TextView) fl.findViewById(R.id.textview_starttime);
+        text_endtime = (TextView) fl.findViewById(R.id.textview_endtime);
+
+        image_addpicture = (ImageView) fl.findViewById(R.id.imageView_addpicture);
+        image_addpicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Todo: 新增相片事件
+            }
+        });
+
+        return fl;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
