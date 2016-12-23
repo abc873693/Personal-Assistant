@@ -47,7 +47,7 @@ public class SchedulesFragment extends Fragment {
     private Context context;
     private RecyclerView recyclerView;
     private ArrayList<ScheduleModel> lists = new ArrayList<>();
-    private ArrayList<String> activitys = new ArrayList<>();
+    private ArrayList<String> schedules = new ArrayList<>();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -83,6 +83,8 @@ public class SchedulesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_schedules, container, false);
         context = getActivity();
         recyclerView = (RecyclerView) view.findViewById(listView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
         getUserActivity();
         // Inflate the layout for this fragment
         return view;
@@ -124,16 +126,16 @@ public class SchedulesFragment extends Fragment {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                activitys.clear();
+                schedules.clear();
                 Log.e(DATABASE_TAG, "onDataChange");
                 for (DataSnapshot ds : dataSnapshot.child(USER_UID).child("activtys").getChildren()) {
                     //ScheduleModel model = new ScheduleModel();
-                    activitys.add(ds.child("uid").getValue().toString());
+                    schedules.add(ds.child("uid").getValue().toString());
                     Log.e(DATABASE_TAG, ds.child("uid").getValue().toString());
                     //adapter.add(ds.child("name").getValue().toString());
                 }
-                if (activitys.size() != 0) {
-                    getActivityData();
+                if (schedules.size() != 0) {
+                    getScheduleData();
                 }
             }
 
@@ -145,7 +147,7 @@ public class SchedulesFragment extends Fragment {
         });
     }
 
-    private void getActivityData() {
+    private void getScheduleData() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("activity");
         Log.e(DATABASE_TAG, "getUserActivity...");
@@ -154,7 +156,7 @@ public class SchedulesFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 lists.clear();
                 Log.e(DATABASE_TAG, "onDataChange");
-                for (String uid : activitys) {
+                for (String uid : schedules) {
                     ScheduleModel model = new ScheduleModel();
                     DataSnapshot ds = dataSnapshot.child(uid);
                     model.title = ds.child("title").getValue().toString();
@@ -166,12 +168,12 @@ public class SchedulesFragment extends Fragment {
                     Log.e(DATABASE_TAG, uid + " title=" + model.title);
                     lists.add(model);
                 }
-                LinearLayoutManager llm = new LinearLayoutManager(context);
+                /*LinearLayoutManager llm = new LinearLayoutManager(context);
                 llm.setAutoMeasureEnabled(true);
-                llm.setOrientation(LinearLayoutManager.VERTICAL);
-                recyclerView.setLayoutManager(llm);
+                llm.setOrientation(LinearLayoutManager.VERTICAL);*/
                 ContactAdapter customAdapter = new ContactAdapter(lists);
                 recyclerView.setAdapter(customAdapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(context));
             }
 
             @Override
@@ -216,7 +218,7 @@ public class SchedulesFragment extends Fragment {
         public ContactViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
             View itemView = LayoutInflater.
                     from(viewGroup.getContext()).
-                    inflate(R.layout.list_activity, viewGroup, false);
+                    inflate(R.layout.list_schedule, viewGroup, false);
             return new ContactViewHolder(itemView);
         }
 

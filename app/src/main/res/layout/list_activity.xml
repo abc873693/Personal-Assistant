@@ -1,44 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
-    card_view:cardCornerRadius="4dp">
-
+    xmlns:swipe="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal">
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/lineaLayout_left"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:padding="10dp">
-
-        <TextView
-            android:id="@+id/textView_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            tools:text="Title"
-            />
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/grey_500"
+            android:paddingTop="10dp"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
             android:textSize="18sp"
-            tools:text="time"
-            android:padding="5dp"/>
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            tools:text="時間" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/textView_content"
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="22sp"
-            tools:text="content" />
+            android:layout_gravity="center"
+            android:background="@color/blue_500"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp">
+            <View
+                android:id="@+id/line_normal_top"
+                android:layout_width="2dp"
+                android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:background="@color/blue_500"
+                />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="25dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_radio_button_unchecked"
+            android:scaleType="center"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/blue_500"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp">
+            <View
+                android:id="@+id/line_normal"
+                android:layout_width="2dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:background="@color/blue_500"
+                />
+        </RelativeLayout>
+
     </LinearLayout>
-</android.support.v7.widget.CardView>
+    <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="1dp"
+        swipe:leftEdgeSwipeOffset="0dp"
+        swipe:rightEdgeSwipeOffset="0dp">
+
+        <LinearLayout
+            android:id="@+id/bottom_wrapper"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:weightSum="2">
+            <TextView
+                android:id="@+id/tvCollect"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/blue_400"
+                android:gravity="center"
+                android:text="收藏"
+                android:textColor="@color/black" />
+            <TextView
+                android:id="@+id/tvDelete"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/red_400"
+                android:gravity="center"
+                android:text="刪除"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingRight="10dp">
+            <TextView
+                android:id="@+id/textView_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="5dp"
+                android:paddingStart="5dp"
+                android:paddingTop="10dp"
+                android:textSize="25sp"
+                android:textColor="@color/black"
+                tools:text="標題" />
+            <TextView
+                android:id="@+id/textView_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="5dp"
+                android:paddingStart="5dp"
+                android:paddingTop="10dp"
+                android:textSize="25sp"
+                android:textColor="@color/black"
+                tools:text="內容" />
+        </LinearLayout>
+    </com.daimajia.swipe.SwipeLayout>
+
+</LinearLayout>

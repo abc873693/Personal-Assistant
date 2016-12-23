@@ -18,13 +18,15 @@ import com.google.firebase.database.ValueEventListener;
 
 public class AddScheduleActivity extends AppCompatActivity {
     private android.support.v7.widget.Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_schedule);
         initToolbar();
     }
-    private void initToolbar(){
+
+    private void initToolbar() {
         toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         // Set an OnMenuItemClickListener to handle menu item clicks
         toolbar.setTitle("新增行程");
@@ -48,29 +50,31 @@ public class AddScheduleActivity extends AppCompatActivity {
         toolbar.inflateMenu(R.menu.toolber_add);
         //setSupportActionBar(toolbar);
     }
-    public long count=0;
+
+    public long count = 0;
+
     private void saveActivity() {
-        FirebaseDatabase database =FirebaseDatabase.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot snap:dataSnapshot.getChildren()){
-                    if(snap.getKey()=="activity")count=snap.getChildrenCount();
-                    Log.e("count",count+"");
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                    if (snap.getKey() == "activity") count = snap.getChildrenCount();
+                    Log.e("count", count + "");
                 }
                 DatabaseReference mDatabase;
-                EditText title=(EditText)findViewById(R.id.edittext_title);
-                EditText content=(EditText)findViewById(R.id.edittext_content);
-                TextView location=(TextView)findViewById(R.id.textview_location);
-                TextView startdate=(TextView)findViewById(R.id.textview_startdate);
-                TextView starttime=(TextView)findViewById(R.id.textview_starttime);
-                TextView enddate=(TextView)findViewById(R.id.textview_enddate);
-                TextView endtime=(TextView)findViewById(R.id.textview_endtime);
-                mDatabase=FirebaseDatabase.getInstance().getReference();
-                if(location.getText()+"" == "" || content.getText()+"" == "" || title.getText()+"" == "" ||
-                        startdate.getText()+"" == "" || starttime.getText()+"" == "" || enddate.getText()+"" == "" || endtime.getText()+"" == ""){
-                    LinearLayout addschedule=(LinearLayout) findViewById(R.id.linelayout_addschedule);
+                EditText title = (EditText) findViewById(R.id.edittext_title);
+                EditText content = (EditText) findViewById(R.id.edittext_content);
+                TextView location = (TextView) findViewById(R.id.textview_location);
+                TextView startdate = (TextView) findViewById(R.id.textview_startdate);
+                TextView starttime = (TextView) findViewById(R.id.textview_starttime);
+                TextView enddate = (TextView) findViewById(R.id.textview_enddate);
+                TextView endtime = (TextView) findViewById(R.id.textview_endtime);
+                mDatabase = FirebaseDatabase.getInstance().getReference();
+                if (location.getText() + "" == "" || content.getText() + "" == "" || title.getText() + "" == "" ||
+                        startdate.getText() + "" == "" || starttime.getText() + "" == "" || enddate.getText() + "" == "" || endtime.getText() + "" == "") {
+                    LinearLayout addschedule = (LinearLayout) findViewById(R.id.linelayout_addschedule);
                     final Snackbar snackbar = Snackbar
                             .make(addschedule, "請物留空", Snackbar.LENGTH_INDEFINITE)
                             .setAction("確定", new View.OnClickListener() {
@@ -80,7 +84,7 @@ public class AddScheduleActivity extends AppCompatActivity {
                                 }
                             });
                     snackbar.show();
-                }else {
+                } else {
                     mDatabase.child("activity").child((count + 1) + "").child("location").setValue(location.getText() + "");
                     mDatabase.child("activity").child((count + 1) + "").child("content").setValue(content.getText() + "");
                     mDatabase.child("activity").child((count + 1) + "").child("title").setValue(title.getText() + "");
