@@ -10,4 +10,5 @@ public class ScheduleModel {
     public String date_begin;
     public String date_end;
     public String content;
+    public String location;
 }
