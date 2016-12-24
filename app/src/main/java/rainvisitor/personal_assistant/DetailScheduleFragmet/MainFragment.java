@@ -200,7 +200,9 @@ public class MainFragment extends Fragment {
                     //when user's hand released.
                 }
             });
-            holder.swipeLayout.setOnClickListener(new View.OnClickListener() {
+            Log.e("holder",holder.textView_title.getText().toString());
+            //holder.swipeLayout.setVisibility(View.INVISIBLE);
+            holder.textView_see.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     View parent = (View) view.getParent();
@@ -213,14 +215,27 @@ public class MainFragment extends Fragment {
                     detailScheduleActivity.changeContent(DetailScheduleActivity.FRAGMENT.content,lists.get(itemPosition).uid);
                 }
             });
-            Log.e("holder",holder.textView_title.getText().toString());
-            //holder.swipeLayout.setVisibility(View.INVISIBLE);
+            holder.textView_edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+            holder.textView_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
         }
 
         class ContactViewHolder extends RecyclerView.ViewHolder {
             TextView textView_title;
             TextView textView_time;
             TextView textView_content;
+            TextView textView_see;
+            TextView textView_edit;
+            TextView textView_delete;
             SwipeLayout swipeLayout;
 
             private ContactViewHolder(View convertView) {
@@ -229,6 +244,15 @@ public class MainFragment extends Fragment {
                 textView_time = (TextView) convertView.findViewById(R.id.textView_time);
                 textView_content = (TextView) convertView.findViewById(R.id.textView_content);
                 swipeLayout = (SwipeLayout) convertView.findViewById(R.id.swipeLayout);
+                textView_see = (TextView) convertView.findViewById(R.id.tvSee);
+                textView_edit = (TextView) convertView.findViewById(R.id.tvEdit);
+                textView_delete = (TextView) convertView.findViewById(R.id.tvDelete);
+                swipeLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        swipeLayout.open();
+                    }
+                });
             }
         }
 

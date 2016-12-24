@@ -25,4 +25,7 @@
     <string name="hint_detailschedule_content_cost">花費</string>
     <string name="hint_detailschedule_content_remark">備註</string>
     <string name="hint_detailschedule_content_picture">相片</string>
+    <string name="delete">刪除</string>
+    <string name="see">查看</string>
+    <string name="edit">編輯</string>
 </resources>

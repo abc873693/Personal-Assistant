@@ -81,15 +81,24 @@
             android:id="@+id/bottom_wrapper"
             android:layout_width="240dp"
             android:layout_height="match_parent"
-            android:weightSum="2">
+            android:weightSum="3">
             <TextView
-                android:id="@+id/tvCollect"
+                android:id="@+id/tvSee"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/green_400"
+                android:gravity="center"
+                android:text="@string/see"
+                android:textColor="@color/black" />
+            <TextView
+                android:id="@+id/tvEdit"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@color/blue_400"
                 android:gravity="center"
-                android:text="收藏"
+                android:text="@string/edit"
                 android:textColor="@color/black" />
             <TextView
                 android:id="@+id/tvDelete"
@@ -98,7 +107,7 @@
                 android:layout_weight="1"
                 android:background="@color/red_400"
                 android:gravity="center"
-                android:text="刪除"
+                android:text="@string/delete"
                 android:textColor="@color/black" />
         </LinearLayout>
 
