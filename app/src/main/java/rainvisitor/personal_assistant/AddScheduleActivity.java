@@ -304,11 +304,11 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                     count = dataSnapshot.child("activity").getChildrenCount();
                     Log.e("count", count + "");
                     DatabaseReference dr = mDatabase.child((count + 1) + "").getRef();
-                    dr.child("location").setValue(textView_location.getText() + "");
+                    dr.child("location").child("name").setValue(textView_location.getText() + "");
                     dr.child("content").setValue(editText_content.getText() + "");
                     dr.child("title").setValue(editText_title.getText() + "");
-                    dr.child("time").child("begin").setValue(textView_dateStart.getText() + " " + textView_timeStart.getText() + "");
-                    dr.child("time").child("end").setValue(textView_dateEnd.getText() + " " + textView_timeEnd.getText() + "");
+                    dr.child("time").child("begin").setValue(start.getTimeInMillis());
+                    dr.child("time").child("end").setValue(end.getTimeInMillis());
                     dr.child("members").child("0").child("authority").setValue("creator");
                     dr.child("members").child("0").child("uid").setValue(uid);
                     finish();
