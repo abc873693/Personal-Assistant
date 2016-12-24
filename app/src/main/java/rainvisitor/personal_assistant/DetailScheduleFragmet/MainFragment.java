@@ -29,7 +29,7 @@ import rainvisitor.personal_assistant.R;
 public class MainFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
-    private String UID ;
+    private String UID, Title , Location;
     private Context context;
     private static final String DATABASE_TAG = "Firebase Database";
     private static final String USER_UID = "4wCRmeLUdtUBREByNn1GHFdFsnl2";
@@ -37,6 +37,7 @@ public class MainFragment extends Fragment {
     private ArrayList<ActivityModel> lists = new ArrayList<>();
     private ArrayList<String> activitys = new ArrayList<>();
     private ContactAdapter customAdapter;
+    private DetailScheduleActivity detailScheduleActivity;
 
     public MainFragment() {
         // Required empty public constructor
@@ -63,6 +64,7 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_detailschedule_main, container, false);
         context = getActivity();
+        detailScheduleActivity = (DetailScheduleActivity) getActivity();
         recyclerView = (RecyclerView) view.findViewById(R.id.listview);
         getActivityeData();
         return view;
@@ -106,7 +108,10 @@ public class MainFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 lists.clear();
                 Log.d(DATABASE_TAG, "uid = " + UID);
-                Log.e(DATABASE_TAG, "onDataChange");
+                Title = dataSnapshot.child(UID).child("title").getValue().toString();
+                Location = dataSnapshot.child(UID).child("location").child("name").getValue().toString();
+                detailScheduleActivity.collapsingToolbar.setTitle(Title);
+                detailScheduleActivity.textView_location.setText(Location);
                 for (DataSnapshot ds : dataSnapshot.child(UID).child("acitivty_child").getChildren()) {
                     ActivityModel model = new ActivityModel();
                     model.title = ds.child("title").getValue().toString();

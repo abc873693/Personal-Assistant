@@ -18,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Date;
 
+import rainvisitor.personal_assistant.DetailScheduleActivity;
 import rainvisitor.personal_assistant.R;
 
 public class ContentFragment extends Fragment {
@@ -25,6 +26,7 @@ public class ContentFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private DetailScheduleActivity detailScheduleActivity;
     private String content = "", creator = "", title = "", place = "";
     Date date_begin, date_end;
 
@@ -40,14 +42,6 @@ public class ContentFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ContentFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public ContentFragment newInstance(String param1, String param2) {
         ContentFragment fragment = new ContentFragment();
@@ -78,6 +72,7 @@ public class ContentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detailschedule_content, container, false);
+        detailScheduleActivity = (DetailScheduleActivity) getActivity();
         textView_content = (TextView) view.findViewById(R.id.textview_content);
         textView_creator = (TextView) view.findViewById(R.id.textview_creator);
         textView_time = (TextView) view.findViewById(R.id.textview_time);
@@ -91,10 +86,11 @@ public class ContentFragment extends Fragment {
                 creator = ds.child("creator").getValue().toString();
                 title = ds.child("title").getValue().toString();
                 Log.e("mParam1", ds.child("content").getValue() + "");
-
+                detailScheduleActivity.collapsingToolbar.setTitle(title);
                 textView_content.setText(content);
                 textView_time.setText(ds.child("time").child("begin").getValue() + "\n到\n" + ds.child("time").child("end").getValue());
                 textView_creator.setText(creator);
+                Log.d("Content", "title = " + title + " creator = "+ creator + " content = " + content);
             }
 
             @Override
