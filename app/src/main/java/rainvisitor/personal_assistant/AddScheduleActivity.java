@@ -145,12 +145,16 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        temp = Calendar.getInstance();
         String date = year + "年" + (monthOfYear + 1) + "月" + dayOfMonth + "日";
         switch (current_date) {
             case 1:
                 temp.set(year, monthOfYear, dayOfMonth, start.get(Calendar.HOUR_OF_DAY), start.get(Calendar.MINUTE));
                 Log.e("Date parse", year + "年" + (monthOfYear + 1) + "月" + dayOfMonth + "日" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE));
-                if (temp.getTimeInMillis() > end.getTimeInMillis()) {
+                Log.e("End",end.getTimeInMillis()+"");
+                Log.e("Temp",temp.getTimeInMillis()+"");
+                if (temp.getTimeInMillis() - end.getTimeInMillis() > 60000) {
+                    current_date=1;
                     checkdate();
                     return;
                 }
@@ -160,7 +164,10 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
             case 2:
                 temp.set(year, monthOfYear, dayOfMonth, end.get(Calendar.HOUR_OF_DAY), end.get(Calendar.MINUTE));
                 Log.e("Date parse", year + "年" + (monthOfYear + 1) + "月" + dayOfMonth + "日" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE));
-                if (start.getTimeInMillis() > temp.getTimeInMillis()) {
+                Log.e("Start",start.getTimeInMillis()+"");
+                Log.e("Temp",temp.getTimeInMillis()+"");
+                if (start.getTimeInMillis() - temp.getTimeInMillis() > 60000) {
+                    current_date=2;
                     checkdate();
                     return;
                 }
@@ -173,13 +180,15 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
     }
 
     public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
+        temp = Calendar.getInstance();
         String hourString = hourOfDay < 10 ? "0" + hourOfDay : "" + hourOfDay;
         String minuteString = minute < 10 ? "0" + minute : "" + minute;
         String time = hourString + ":" + minuteString;
         switch (current_time) {
             case 1:
                 temp.set(start.get(Calendar.YEAR), start.get(Calendar.MONTH), start.get(Calendar.DATE), hourOfDay, minute);
-                if (temp.getTimeInMillis() > end.getTimeInMillis()) {
+                if (temp.getTimeInMillis() - end.getTimeInMillis() > 60000) {
+                    current_time=1;
                     checktime();
                     return;
                 }
@@ -188,10 +197,12 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                 break;
             case 2:
                 temp.set(end.get(Calendar.YEAR), end.get(Calendar.MONTH), end.get(Calendar.DATE), hourOfDay, minute);
-                if(start.getTimeInMillis() > temp.getTimeInMillis()){
+                if(start.getTimeInMillis() - temp.getTimeInMillis() > 60000){
+                    current_time=2;
                     checktime();
                     return;
                 }
+                end = temp;
                 textView_timeEnd.setText(time);
                 break;
             default:
