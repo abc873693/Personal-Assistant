@@ -112,25 +112,6 @@ public class DetailScheduleActivity extends AppCompatActivity implements
 
     }
 
-    /*@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Log.d("onKeyDown",CurrentFragment.toString());
-            switch (CurrentFragment) {
-                case main:
-                    //finish();
-                    break;
-                case content:
-                case add:
-                    changeContent(FRAGMENT.main);
-                    break;
-                default:
-                    break;
-            }
-        }
-        return false;
-    }*/
-
     public void changeContent(FRAGMENT position) {
         Fragment fragment = null;
         switch (position) {
@@ -140,6 +121,33 @@ public class DetailScheduleActivity extends AppCompatActivity implements
                 break;
             case content:
                 fragment = new ContentFragment().newInstance();
+                break;
+            case add:
+                fragment = new AddFragment().newInstance();
+                toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
+                break;
+            default:
+
+                break;
+        }
+        if (fragment != null) {
+            FragmentTransaction fragTrans = getFragmentManager().beginTransaction();
+            fragTrans.setTransition(TRANSIT_FRAGMENT_FADE);
+            fragTrans.replace(R.id.content_main, fragment);
+            fragTrans.commit();
+        }
+        CurrentFragment = position;
+    }
+
+    public void changeContent(FRAGMENT position,String param1) {
+        Fragment fragment = null;
+        switch (position) {
+            case main:
+                fragment = new MainFragment().newInstance(current_activity_uid);
+                toolbar.setNavigationIcon(null);
+                break;
+            case content:
+                fragment = new ContentFragment().newInstance(current_activity_uid,param1);
                 break;
             case add:
                 fragment = new AddFragment().newInstance();

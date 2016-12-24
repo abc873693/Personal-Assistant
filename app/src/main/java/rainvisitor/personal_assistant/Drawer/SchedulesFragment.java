@@ -27,8 +27,6 @@ import rainvisitor.personal_assistant.DetailScheduleActivity;
 import rainvisitor.personal_assistant.Models.ScheduleModel;
 import rainvisitor.personal_assistant.R;
 
-import static rainvisitor.personal_assistant.R.id.listView;
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -82,7 +80,7 @@ public class SchedulesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_schedules, container, false);
         context = getActivity();
-        recyclerView = (RecyclerView) view.findViewById(listView);
+        recyclerView = (RecyclerView) view.findViewById(R.id.listView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
         getUserActivity();

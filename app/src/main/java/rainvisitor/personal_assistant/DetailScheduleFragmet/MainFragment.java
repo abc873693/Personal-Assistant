@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import rainvisitor.personal_assistant.DetailScheduleActivity;
 import rainvisitor.personal_assistant.Models.ActivityModel;
 import rainvisitor.personal_assistant.R;
 
@@ -35,6 +36,7 @@ public class MainFragment extends Fragment {
     private RecyclerView recyclerView;
     private ArrayList<ActivityModel> lists = new ArrayList<>();
     private ArrayList<String> activitys = new ArrayList<>();
+    private ContactAdapter customAdapter;
 
     public MainFragment() {
         // Required empty public constructor
@@ -120,7 +122,7 @@ public class MainFragment extends Fragment {
                 llm.setAutoMeasureEnabled(true);
                 llm.setOrientation(LinearLayoutManager.VERTICAL);
                 recyclerView.setLayoutManager(llm);
-                ContactAdapter customAdapter = new ContactAdapter(lists);
+                customAdapter = new ContactAdapter(lists);
                 recyclerView.setAdapter(customAdapter);
                 int c=0;
                 Log.w(DATABASE_TAG, " getItemCount = " + customAdapter.getItemCount());
@@ -196,6 +198,19 @@ public class MainFragment extends Fragment {
                 @Override
                 public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
                     //when user's hand released.
+                }
+            });
+            holder.swipeLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    View parent = (View) view.getParent();
+                    while (!(parent instanceof RecyclerView)){
+                        view=parent;
+                        parent = (View) parent.getParent();
+                    }
+                    int itemPosition = recyclerView.getChildLayoutPosition(view);
+                    DetailScheduleActivity detailScheduleActivity = (DetailScheduleActivity)getActivity();
+                    detailScheduleActivity.changeContent(DetailScheduleActivity.FRAGMENT.content,lists.get(itemPosition).uid);
                 }
             });
             Log.e("holder",holder.textView_title.getText().toString());
