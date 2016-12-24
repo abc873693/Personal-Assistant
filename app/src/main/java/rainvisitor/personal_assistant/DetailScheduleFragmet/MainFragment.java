@@ -284,7 +284,7 @@ public class MainFragment extends Fragment {
                 textView_see = (TextView) convertView.findViewById(R.id.tvSee);
                 textView_edit = (TextView) convertView.findViewById(R.id.tvEdit);
                 textView_delete = (TextView) convertView.findViewById(R.id.tvDelete);
-                textView_date = (TextView)convertView.findViewById(R.id.textView_date);
+                textView_date = (TextView) convertView.findViewById(R.id.textView_date);
                 swipeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

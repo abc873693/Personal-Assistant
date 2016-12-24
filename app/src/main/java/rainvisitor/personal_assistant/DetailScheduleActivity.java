@@ -4,8 +4,11 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -33,8 +36,10 @@ public class DetailScheduleActivity extends AppCompatActivity implements
     public TextView textView_location;
     public android.support.v7.widget.Toolbar toolbar;
     public CoordinatorLayout linearLayout;
+    public NestedScrollView nestedScrollView;
+    public AppBarLayout appBarLayout;
     public FRAGMENT CurrentFragment = FRAGMENT.main;
-    private String current_activity_uid ;
+    private String current_activity_uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +47,12 @@ public class DetailScheduleActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_detail_schedule);
         if (getIntent().getExtras() != null) {
             current_activity_uid = getIntent().getExtras().getString("activity_uid");
-        }
-        else current_activity_uid = "null";
+        } else current_activity_uid = "null";
         linearLayout = (CoordinatorLayout) findViewById(R.id.activity_detail_schedule);
         collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        nestedScrollView = (NestedScrollView) findViewById(R.id.NestedScrollView);
         textView_location = (TextView) findViewById(R.id.textView_location);
+        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
         //collapsingToolbar.setTitle("Title");
         collapsingToolbar.setExpandedTitleGravity(Gravity.BOTTOM);
         initToolbar();
@@ -83,7 +89,7 @@ public class DetailScheduleActivity extends AppCompatActivity implements
         });
         // Inflate a menu to be displayed in the toolbar
         toolbar.inflateMenu(R.menu.toolber_detail);
-        Log.d("toolbar",getTitle().toString());
+        Log.d("toolbar", getTitle().toString());
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,7 +111,7 @@ public class DetailScheduleActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        Log.e("onBackPressed",CurrentFragment.toString());
+        Log.e("onBackPressed", CurrentFragment.toString());
         switch (CurrentFragment) {
             case main:
                 finish();
@@ -127,13 +133,18 @@ public class DetailScheduleActivity extends AppCompatActivity implements
             case main:
                 fragment = new MainFragment().newInstance(current_activity_uid);
                 toolbar.setNavigationIcon(null);
+                appBarLayout.setExpanded(true, true);
+                ViewCompat.setNestedScrollingEnabled(nestedScrollView, true);
                 break;
             case content:
                 fragment = new ContentFragment().newInstance();
+                toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
                 break;
             case add:
                 fragment = new AddFragment().newInstance();
                 toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
+                appBarLayout.setExpanded(false, true);
+                ViewCompat.setNestedScrollingEnabled(nestedScrollView, false);
                 break;
             default:
 
@@ -148,7 +159,7 @@ public class DetailScheduleActivity extends AppCompatActivity implements
         CurrentFragment = position;
     }
 
-    public void changeContent(FRAGMENT position,String param1) {
+    public void changeContent(FRAGMENT position, String param1) {
         Fragment fragment = null;
         switch (position) {
             case main:
@@ -156,7 +167,7 @@ public class DetailScheduleActivity extends AppCompatActivity implements
                 toolbar.setNavigationIcon(null);
                 break;
             case content:
-                fragment = new ContentFragment().newInstance(current_activity_uid,param1);
+                fragment = new ContentFragment().newInstance(current_activity_uid, param1);
                 break;
             case add:
                 fragment = new AddFragment().newInstance();
