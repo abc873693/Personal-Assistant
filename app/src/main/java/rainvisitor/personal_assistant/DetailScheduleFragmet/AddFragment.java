@@ -3,10 +3,12 @@ package rainvisitor.personal_assistant.DetailScheduleFragmet;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,11 +29,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
+import rainvisitor.personal_assistant.DetailScheduleActivity;
 import rainvisitor.personal_assistant.R;
 
-public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener{
+public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -39,14 +45,20 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     private TextView textView_location, textView_dateStart, textView_dateEnd, textView_timeStart, textView_timeEnd;
     private ImageView imageView_addPicture;
 
+    //Todo: RecyclerView
+    private ArrayList<Image> images = new ArrayList<>();
+    private RecyclerView recyclerView;
+
     private long count = 0;
     private LinearLayout linearLayout;
-    private Calendar now ;
-    private int current_date = 0 , current_time = 0;
+    private Calendar now;
+    private int current_date = 0, current_time = 0;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private DetailScheduleActivity detailScheduleActivity;
 
     private OnFragmentInteractionListener mListener;
 
@@ -54,14 +66,6 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public AddFragment newInstance(String param1, String param2) {
         AddFragment fragment = new AddFragment();
@@ -86,20 +90,40 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        FrameLayout fl = (FrameLayout) inflater.inflate(R.layout.fragment_detailschedule_add, container, false);
+        editText_title = (EditText) fl.findViewById(R.id.edittext_title);
+        textView_location = (TextView) fl.findViewById(R.id.textview_location);
+        textView_dateStart = (TextView) fl.findViewById(R.id.textview_startdate);
+        textView_dateEnd = (TextView) fl.findViewById(R.id.textview_enddate);
+        textView_timeStart = (TextView) fl.findViewById(R.id.textview_starttime);
+        textView_timeEnd = (TextView) fl.findViewById(R.id.textview_endtime);
+        TextView textview_newpicture = (TextView) fl.findViewById(R.id.textView_newpicture);
+        detailScheduleActivity = (DetailScheduleActivity) getActivity();
+
         now = Calendar.getInstance();
-        String date = now.get(Calendar.YEAR) + "年" +now.get(Calendar.MONTH) + "月" + now.get(Calendar.DAY_OF_MONTH) + "日" ;
-        String timeS = now.get(Calendar.HOUR_OF_DAY) + ":" +now.get(Calendar.MINUTE);
-        String timeE = now.get(Calendar.HOUR_OF_DAY) + ":" +now.get(Calendar.MINUTE);
+        String date = now.get(Calendar.YEAR) + "年" + now.get(Calendar.MONTH) + "月" + now.get(Calendar.DAY_OF_MONTH) + "日";
+        String timeS = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
+        String timeE = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
+
+
         textView_dateStart.setText(date);
         textView_dateEnd.setText(date);
         textView_timeStart.setText(timeS);
         textView_timeEnd.setText(timeE);
+
+
         textView_dateStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 now = Calendar.getInstance();
                 DatePickerDialog dpd = DatePickerDialog.newInstance(
-                        (DatePickerDialog.OnDateSetListener) getActivity(),
+                        AddFragment.this,
                         now.get(Calendar.YEAR),
                         now.get(Calendar.MONTH),
                         now.get(Calendar.DAY_OF_MONTH)
@@ -113,7 +137,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
             public void onClick(View view) {
                 now = Calendar.getInstance();
                 DatePickerDialog dpd = DatePickerDialog.newInstance(
-                        (DatePickerDialog.OnDateSetListener) getActivity(),
+                        AddFragment.this,
                         now.get(Calendar.YEAR),
                         now.get(Calendar.MONTH),
                         now.get(Calendar.DAY_OF_MONTH)
@@ -127,7 +151,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
             public void onClick(View view) {
                 now = Calendar.getInstance();
                 TimePickerDialog tpd = TimePickerDialog.newInstance(
-                        (TimePickerDialog.OnTimeSetListener) getActivity(),
+                        AddFragment.this,
                         now.get(Calendar.HOUR_OF_DAY),
                         now.get(Calendar.MINUTE),
                         false);
@@ -140,53 +164,63 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
             public void onClick(View view) {
                 now = Calendar.getInstance();
                 TimePickerDialog tpd = TimePickerDialog.newInstance(
-                        (TimePickerDialog.OnTimeSetListener) getActivity(),
+                        AddFragment.this,
                         now.get(Calendar.HOUR_OF_DAY),
                         now.get(Calendar.MINUTE),
                         false);
-                current_time = 1;
+                current_time = 2;
                 tpd.show(getFragmentManager(), "Timepickerdialog");
             }
         });
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        FrameLayout fl = (FrameLayout) inflater.inflate(R.layout.fragment_detailschedule_add, container, false);
-        editText_title = (EditText) fl.findViewById(R.id.edittext_title);
-        textView_location = (TextView) fl.findViewById(R.id.textview_location);
-        textView_dateStart = (TextView) fl.findViewById(R.id.textview_startdate);
-        textView_dateEnd = (TextView) fl.findViewById(R.id.textview_enddate);
-        textView_timeStart = (TextView) fl.findViewById(R.id.textview_starttime);
-        textView_timeEnd = (TextView) fl.findViewById(R.id.textview_endtime);
 
+
+        /*//Todo: RecycleView
+        recyclerView = (RecyclerView) fl.findViewById(R.id.recycleview_picture);
+        // 创建一个线性布局管理器
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        // 设置布局管理器
+        recyclerView.setLayoutManager(layoutManager);
+        // 创建数据集
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        // 创建Adapter，并指定数据集
+        MyAdapter adapter = new MyAdapter(dataset);
+        // 设置Adapter
+        recyclerView.setAdapter(adapter);*/
+
+        //Todo: 選取相片
         imageView_addPicture = (ImageView) fl.findViewById(R.id.imageView_addpicture);
         imageView_addPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Todo: 新增相片事件
                 Intent intent = new Intent(Intent.ACTION_PICK, null);
-                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI , "image/*");
-                startActivityForResult(intent, 2);
+                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                startActivityForResult(intent, 33);
+            }
+        });
+        textview_newpicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK, null);
+                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                startActivityForResult(intent, 33);
             }
         });
 
         return fl;
     }
 
+
+
+
     //TODO: 回傳相片
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch(requestCode){
-            case 2:
-                //return image To ImageView
-        }
     }
-
-
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
@@ -239,9 +273,6 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                     if (snap.getKey() == "activity") count = snap.getChildrenCount();
                     Log.e("count", count + "");
                 }
-                DatabaseReference mDatabase;
-
-                mDatabase = FirebaseDatabase.getInstance().getReference();
                 if (textView_location.getText() + "" == "" || editText_title.getText() + "" == "" ||
                         textView_dateStart.getText() + "" == "" || textView_timeStart.getText() + "" == "" || textView_dateEnd.getText() + "" == "" || textView_timeEnd.getText() + "" == "") {
 
@@ -255,12 +286,33 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                             });
                     snackbar.show();
                 } else {
-                    DatabaseReference dr = mDatabase.child("activity").child((count + 1) + "");
-                    dr.child("textView_location").setValue(textView_location.getText() + "");
-                    dr.child("editText_title").setValue(editText_title.getText() + "");
-                    dr.child("time").child("textView_timeStart").setValue(textView_dateStart.getText() + " " + textView_timeStart.getText() + "");
-                    dr.child("time").child("textView_timeEnd").setValue(textView_dateEnd.getText() + " " + textView_timeEnd.getText() + "");
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    String uid;
+                    if (user != null) {
+                        String name = user.getDisplayName();
+                        String email = user.getEmail();
+                        Uri photoUrl = user.getPhotoUrl();
 
+                        // The user's ID, unique to the Firebase project. Do NOT use this value to
+                        // authenticate with your backend server, if you have one. Use
+                        // FirebaseUser.getToken() instead.
+                        uid = user.getUid();
+                        Log.e("getCurrentUser", "uid = " + uid + "  name = " + name + "  email = " + email + "  photoUrl = " + photoUrl);
+                    } else uid = "0";
+                    DatabaseReference mDatabase = dataSnapshot.child("activity").getRef();
+                    DatabaseReference userDatabase = dataSnapshot.child("users").child(uid).getRef();
+                    count = dataSnapshot.child("activity").getChildrenCount();
+                    Log.e("count", count + "");
+                    DatabaseReference dr = mDatabase.child((count + 1) + "").getRef();
+                    dr.child("location").setValue(textView_location.getText() + "");
+                    dr.child("title").setValue(editText_title.getText() + "");
+                    dr.child("time").child("begin").setValue(textView_dateStart.getText() + " " + textView_timeStart.getText() + "");
+                    dr.child("time").child("end").setValue(textView_dateEnd.getText() + " " + textView_timeEnd.getText() + "");
+                    dr.child("members").child("0").child("authority").setValue("creator");
+                    dr.child("members").child("0").child("uid").setValue(uid);
+                    long count_activity = dataSnapshot.child("users").child(uid).child("activtys").getChildrenCount();
+                    Log.e("count_activity", "count_activity" + count_activity);
+                    userDatabase.child("activtys").child((count_activity + 1) + "").child("uid").setValue((count + 1) + "");
                 }
             }
 

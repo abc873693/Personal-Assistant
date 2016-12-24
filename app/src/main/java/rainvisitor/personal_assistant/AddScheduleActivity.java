@@ -39,6 +39,9 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
         setContentView(R.layout.activity_add_schedule);
         initToolbar();
         initView();
+
+
+
         now = Calendar.getInstance();
         String date = now.get(Calendar.YEAR) + "年" + (now.get(Calendar.MONTH) + 1) + "月" + now.get(Calendar.DAY_OF_MONTH) + "日";
         String timeS = now.get(Calendar.HOUR_OF_DAY) < 10 ? "0" : "";
@@ -68,6 +71,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                 dpd.show(getFragmentManager(), "Datepickerdialog");
             }
         });
+
         textView_dateEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,6 +85,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                 dpd.show(getFragmentManager(), "Datepickerdialog");
             }
         });
+
         textView_timeStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,6 +98,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                 tpd.show(getFragmentManager(), "Timepickerdialog");
             }
         });
+
         textView_timeEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
