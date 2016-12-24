@@ -35,10 +35,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/textView_location"
                     android:paddingTop="30dp"
                     android:paddingStart="15dp"
                     android:paddingEnd="15dp"
-                    android:text="地點"
+                    android:paddingBottom="10dp"
+                    tools:text="地點"
                     android:textSize="24sp" />
             </LinearLayout>
             <android.support.v7.widget.Toolbar
@@ -65,7 +67,6 @@
             tools:context="rainvisitor.personal_assistant.MainActivity"
             tools:showIn="@layout/app_bar_main"
             android:background="@color/grey_100">
-
         </FrameLayout>
     </android.support.v4.widget.NestedScrollView>
 
