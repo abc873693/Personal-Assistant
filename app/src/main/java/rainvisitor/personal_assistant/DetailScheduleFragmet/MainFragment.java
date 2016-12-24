@@ -116,7 +116,7 @@ public class MainFragment extends Fragment {
                 for (DataSnapshot ds : dataSnapshot.child(UID).child("acitivty_child").getChildren()) {
                     ActivityModel model = new ActivityModel();
                     model.title = ds.child("title").getValue().toString();
-                    Log.e("time",ds.child("time").child("begin").getValue().toString() + "  " + ds.child("time").child("end").getValue().toString());
+                    Log.e("time", ds.child("time").child("begin").getValue().toString() + "  " + ds.child("time").child("end").getValue().toString());
                     model.date_begin = Long.valueOf(ds.child("time").child("begin").getValue().toString());
                     model.date_end = Long.valueOf(ds.child("time").child("end").getValue().toString());
                     model.content = ds.child("content").getValue().toString();
@@ -124,7 +124,16 @@ public class MainFragment extends Fragment {
                     Log.e(DATABASE_TAG, "Value" + ds.getValue().toString());
                     Log.e(DATABASE_TAG, model.uid + " title=" + model.title);
                     lists.add(model);
-                    int c;
+                }
+                for (int i = 0; i < lists.size() - 1; i++) {
+                    for (int j = i + 1; j < lists.size(); j++) {
+                        if (lists.get(i).date_begin > lists.get(j).date_begin) {
+                            ActivityModel tmpA = lists.get(i);
+                            ActivityModel tmpB = lists.get(j);
+                            lists.set(i, tmpB);
+                            lists.set(j, tmpA);
+                        }
+                    }
                 }
                 LinearLayoutManager llm = new LinearLayoutManager(context);
                 llm.setAutoMeasureEnabled(true);
@@ -132,7 +141,6 @@ public class MainFragment extends Fragment {
                 recyclerView.setLayoutManager(llm);
                 customAdapter = new ContactAdapter(lists);
                 recyclerView.setAdapter(customAdapter);
-                int c = 0;
                 Log.w(DATABASE_TAG, " getItemCount = " + customAdapter.getItemCount());
             }
 
@@ -146,10 +154,11 @@ public class MainFragment extends Fragment {
 
 
     public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
-
+        public Calendar Previous;
         private List<ActivityModel> contactList;
 
         private ContactAdapter(List<ActivityModel> contactList) {
+            Previous = Calendar.getInstance();
             this.contactList = contactList;
         }
 
@@ -168,12 +177,27 @@ public class MainFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ContactViewHolder holder, int position) {
+
             Calendar begin = Calendar.getInstance();
             Calendar end = Calendar.getInstance();
             begin.setTimeInMillis(lists.get(position).date_begin);
             end.setTimeInMillis(lists.get(position).date_end);
+            long diff = begin.getTimeInMillis() - Previous.getTimeInMillis();
+            long day = diff / (24 * 60 * 60 * 1000);
+            Log.e("day deffreince", "diff = " + diff + " day = " + day + "");
+            String date;
+            if (day > 0) {
+                date = begin.get(Calendar.YEAR) + "/" + (begin.get(Calendar.MONTH) + 1) + "/" + +begin.get(Calendar.DAY_OF_YEAR);
+            } else {
+                date = "";
+                holder.textView_date.setVisibility(View.GONE);
+            }
+            Previous = begin;
+            holder.textView_date.setText(date);
             holder.textView_title.setText(lists.get(position).title);
-            holder.textView_time.setText(begin.get(Calendar.HOUR_OF_DAY) + ":" + begin.get(Calendar.MINUTE));
+            String tmp1 = ((begin.get(Calendar.HOUR_OF_DAY) < 10) ? "0" : "") + begin.get(Calendar.HOUR_OF_DAY);
+            String tmp2 = ((begin.get(Calendar.MINUTE) < 10) ? "0" : "") + begin.get(Calendar.MINUTE);
+            holder.textView_time.setText(tmp1 + ":" + tmp2);
             holder.textView_content.setText(lists.get(position).content);
             holder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
             // Drag From Left
@@ -248,6 +272,7 @@ public class MainFragment extends Fragment {
             TextView textView_see;
             TextView textView_edit;
             TextView textView_delete;
+            TextView textView_date;
             SwipeLayout swipeLayout;
 
             private ContactViewHolder(View convertView) {
@@ -259,6 +284,7 @@ public class MainFragment extends Fragment {
                 textView_see = (TextView) convertView.findViewById(R.id.tvSee);
                 textView_edit = (TextView) convertView.findViewById(R.id.tvEdit);
                 textView_delete = (TextView) convertView.findViewById(R.id.tvDelete);
+                textView_date = (TextView)convertView.findViewById(R.id.textView_date);
                 swipeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
