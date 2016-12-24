@@ -101,4 +101,8 @@
     <string name="hint_detailschedule_content_cost">Cost</string>
     <string name="hint_detailschedule_content_remark">Remark</string>
     <string name="hint_detailschedule_content_picture">Picture</string>
+    <string name="delete">delete</string>
+    <string name="see">see</string>
+    <string name="編輯">edit</string>
+    <string name="edit">edit</string>
 </resources>
