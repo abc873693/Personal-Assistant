@@ -4,11 +4,13 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import rainvisitor.personal_assistant.DetailScheduleFragmet.AddFragment;
 import rainvisitor.personal_assistant.DetailScheduleFragmet.ContentFragment;
@@ -27,7 +29,8 @@ public class DetailScheduleActivity extends AppCompatActivity implements
     }
 
     private android.support.v7.widget.Toolbar toolbar;
-    private LinearLayout linearLayout;
+    private CoordinatorLayout linearLayout;
+    private CollapsingToolbarLayout collapsingToolbar;
     private FRAGMENT CurrentFragment = FRAGMENT.main;
     private String current_activity_uid ;
 
@@ -39,7 +42,11 @@ public class DetailScheduleActivity extends AppCompatActivity implements
             current_activity_uid = getIntent().getExtras().getString("activity_uid");
         }
         else current_activity_uid = "null";
-        linearLayout = (LinearLayout) findViewById(R.id.activity_detail_schedule);
+        linearLayout = (CoordinatorLayout) findViewById(R.id.activity_detail_schedule);
+        collapsingToolbar =
+                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle("Title");
+        collapsingToolbar.setExpandedTitleGravity(Gravity.BOTTOM);
         initToolbar();
         changeContent(FRAGMENT.main);
     }
@@ -74,7 +81,7 @@ public class DetailScheduleActivity extends AppCompatActivity implements
         });
         // Inflate a menu to be displayed in the toolbar
         toolbar.inflateMenu(R.menu.toolber_detail);
-
+        Log.d("toolbar",getTitle().toString());
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

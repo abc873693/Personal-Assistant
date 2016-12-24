@@ -55,7 +55,7 @@
         </activity>
         <activity
             android:name=".DetailScheduleActivity"
-            android:label=""
+            android:label="標題"
             android:theme="@style/MyMaterialTheme.Base">
 
         </activity>
