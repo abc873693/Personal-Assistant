@@ -1,12 +1,20 @@
 package rainvisitor.personal_assistant.DetailScheduleFragmet;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import rainvisitor.personal_assistant.R;
 
@@ -30,6 +38,7 @@ public class ContentFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private TextView textView_creator,textView_time,textView_content;
     public ContentFragment() {
         // Required empty public constructor
     }
@@ -71,8 +80,31 @@ public class ContentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view=inflater.inflate(R.layout.fragment_detailschedule_content,container,false);
+        textView_content=(TextView)view.findViewById(R.id.textview_content);
+        textView_creator=(TextView)view.findViewById(R.id.textview_creator);
+        textView_time=(TextView)view.findViewById(R.id.textview_time);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("mParam1",dataSnapshot.child("activity").child(mParam1).child("acitivty_child").child(mParam2).child("content").getValue()+"");
+                textView_content.setText(dataSnapshot.child("activity").child(mParam1).child("acitivty_child").child(mParam2).child("content").getValue()+"");
+                textView_time.setText(dataSnapshot.child("activity").child(mParam1).child("acitivty_child").child(mParam2).child("time").child("begin").getValue()+"\n到\n"
+                +dataSnapshot.child("activity").child(mParam1).child("acitivty_child").child(mParam2).child("time").child("end").getValue());
+                textView_creator.setText(dataSnapshot.child("activity").child(mParam1).child("acitivty_child").child(mParam2).child("creator").getValue()+"");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        Log.e("abc", mParam1);
+        Log.e("cde",mParam2);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detailschedule_content, container, false);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
