@@ -38,14 +38,22 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
         setContentView(R.layout.activity_add_schedule);
         initToolbar();
         initView();
+
+
+
         now = Calendar.getInstance();
-        String date = now.get(Calendar.YEAR) + "年" + now.get(Calendar.MONTH) + "月" + now.get(Calendar.DAY_OF_MONTH) + "日";
+        String date = now.get(Calendar.YEAR) + "年" + (now.get(Calendar.MONTH)+1) + "月" + now.get(Calendar.DAY_OF_MONTH) + "日";
         String timeS = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
         String timeE = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
+
+
+
         textView_dateStart.setText(date);
         textView_dateEnd.setText(date);
         textView_timeStart.setText(timeS);
         textView_timeEnd.setText(timeE);
+
+
         textView_dateStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,6 +68,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                 dpd.show(getFragmentManager(), "Datepickerdialog");
             }
         });
+
         textView_dateEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,6 +83,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                 dpd.show(getFragmentManager(), "Datepickerdialog");
             }
         });
+
         textView_timeStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,6 +97,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                 tpd.show(getFragmentManager(), "Timepickerdialog");
             }
         });
+
         textView_timeEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,7 +107,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                         now.get(Calendar.HOUR_OF_DAY),
                         now.get(Calendar.MINUTE),
                         false);
-                current_time = 1;
+                current_time = 2;
                 tpd.show(getFragmentManager(), "Timepickerdialog");
             }
         });
@@ -140,7 +151,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String date = +dayOfMonth + "/" + (++monthOfYear) + "/" + year;
+        String date = year + "年" + (++monthOfYear) + "月" + +dayOfMonth + "日";
         Log.e("onDateSet", view.toString());
         switch (current_date) {
             case 1:
@@ -157,7 +168,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
     public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
         String hourString = hourOfDay < 10 ? "0" + hourOfDay : "" + hourOfDay;
         String minuteString = minute < 10 ? "0" + minute : "" + minute;
-        String secondString = second < 10 ? "0" + second : "" + second;
+
         String time = hourString + ":" + minuteString;
         switch (current_time) {
             case 1:
@@ -205,6 +216,9 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                         Log.e("getCurrentUser","uid = "  + uid +"  name = "  + name +"  email = "  + email +"  photoUrl = "  + photoUrl );
                     }
                     else uid = "0";
+
+                    Calendar cc = Calendar.getInstance();
+
                     DatabaseReference mDatabase = dataSnapshot.child("activity").getRef();
                     DatabaseReference userDatabase = dataSnapshot.child("users").child(uid).getRef();
                     count = dataSnapshot.child("activity").getChildrenCount();
@@ -213,8 +227,8 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                     dr.child("location").setValue(textView_location.getText() + "");
                     dr.child("content").setValue(editText_content.getText() + "");
                     dr.child("title").setValue(editText_title.getText() + "");
-                    dr.child("time").child("begin").setValue(textView_dateStart.getText() + " " + textView_timeStart.getText() + "");
-                    dr.child("time").child("end").setValue(textView_dateEnd.getText() + " " + textView_timeEnd.getText() + "");
+                    dr.child("time").child("begin").setValue(textView_dateStart.getText() + " " + textView_timeStart.getText());
+                    dr.child("time").child("end").setValue(textView_dateEnd.getText() + " " + textView_timeEnd.getText());
                     dr.child("members").child("0").child("authority").setValue("creator");
                     dr.child("members").child("0").child("uid").setValue(uid);
                     finish();
