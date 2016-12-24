@@ -30,9 +30,8 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
     private EditText editText_title, editText_content;
     private TextView textView_location, textView_dateStart, textView_timeStart, textView_dateEnd, textView_timeEnd;
     private LinearLayout linearLayout;
-    private Calendar now;
-    private int current_date = 0, current_time = 0, startyear = 0, startmonth = 0, startday = 0, starthour = 0, startmin = 0;
-    private int endyear = 0, endmonth = 0, endday = 0, endhour = 0, endmin = 0;
+    private int current_date = 0, current_time = 0;
+    private Calendar now, start, end, temp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,30 +41,28 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
         initView();
         now = Calendar.getInstance();
         String date = now.get(Calendar.YEAR) + "年" + (now.get(Calendar.MONTH) + 1) + "月" + now.get(Calendar.DAY_OF_MONTH) + "日";
-        String timeS = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
-        String timeE = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
+        String timeS = now.get(Calendar.HOUR_OF_DAY) < 10 ? "0" : "";
+        timeS += now.get(Calendar.HOUR_OF_DAY) + ":";
+        timeS += now.get(Calendar.MINUTE) < 10 ? "0" : "";
+        timeS += now.get(Calendar.MINUTE);
+        String timeE = timeS;
         textView_dateStart.setText(date);
         textView_dateEnd.setText(date);
         textView_timeStart.setText(timeS);
         textView_timeEnd.setText(timeE);
-        startyear = now.get(Calendar.YEAR);
-        endyear = now.get(Calendar.YEAR);
-        endmonth = now.get(Calendar.MONTH);
-        startmonth = now.get(Calendar.MONTH);
-        endday = now.get(Calendar.DAY_OF_MONTH);
-        startday = now.get(Calendar.DAY_OF_MONTH);
-        endhour = now.get(Calendar.HOUR_OF_DAY);
-        starthour = now.get(Calendar.HOUR_OF_DAY);
-        endmin = now.get(Calendar.MINUTE);
-        startmin = now.get(Calendar.MINUTE);
+        start = Calendar.getInstance();
+        end = Calendar.getInstance();
+        temp = Calendar.getInstance();
+        start.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH), now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
+        end.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH), now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
         textView_dateStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DatePickerDialog dpd = DatePickerDialog.newInstance(
                         AddScheduleActivity.this,
-                        startyear,
-                        startmonth,
-                        startday
+                        start.get(Calendar.YEAR),
+                        start.get(Calendar.MONTH),
+                        start.get(Calendar.DATE)
                 );
                 current_date = 1;
                 dpd.show(getFragmentManager(), "Datepickerdialog");
@@ -76,9 +73,9 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
             public void onClick(View view) {
                 DatePickerDialog dpd = DatePickerDialog.newInstance(
                         AddScheduleActivity.this,
-                        endyear,
-                        endmonth,
-                        endday
+                        end.get(Calendar.YEAR),
+                        end.get(Calendar.MONTH),
+                        end.get(Calendar.DATE)
                 );
                 current_date = 2;
                 dpd.show(getFragmentManager(), "Datepickerdialog");
@@ -89,8 +86,8 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
             public void onClick(View view) {
                 TimePickerDialog tpd = TimePickerDialog.newInstance(
                         AddScheduleActivity.this,
-                        starthour,
-                        startmin,
+                        start.get(Calendar.HOUR_OF_DAY),
+                        start.get(Calendar.MINUTE),
                         false);
                 current_time = 1;
                 tpd.show(getFragmentManager(), "Timepickerdialog");
@@ -101,8 +98,8 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
             public void onClick(View view) {
                 TimePickerDialog tpd = TimePickerDialog.newInstance(
                         AddScheduleActivity.this,
-                        endhour,
-                        endmin,
+                        end.get(Calendar.HOUR_OF_DAY),
+                        end.get(Calendar.MINUTE),
                         false);
                 current_time = 2;
                 tpd.show(getFragmentManager(), "Timepickerdialog");
@@ -148,22 +145,26 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        Calendar c = Calendar.getInstance();
-        c.set(year, monthOfYear, dayOfMonth);
-        String date = year + "年" + (++monthOfYear) + "月" + dayOfMonth + "日";
-        Log.e("Date parse", year  + " /" + monthOfYear + "/" + dayOfMonth);
-        Log.e("Date parse", c.get(Calendar.YEAR)  + " /" + (c.get(Calendar.MONTH) + 1) + "/" + c.get(Calendar.DAY_OF_MONTH) + " TINE LONG " + c.getTimeInMillis());
+        String date = year + "年" + (monthOfYear + 1) + "月" + dayOfMonth + "日";
         switch (current_date) {
             case 1:
-                startyear = year;
-                startmonth = monthOfYear - 1;
-                startday = dayOfMonth;
+                temp.set(year, monthOfYear, dayOfMonth, start.get(Calendar.HOUR_OF_DAY), start.get(Calendar.MINUTE));
+                Log.e("Date parse", year + "年" + (monthOfYear + 1) + "月" + dayOfMonth + "日" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE));
+                if (temp.getTimeInMillis() > end.getTimeInMillis()) {
+                    checkdate();
+                    return;
+                }
+                start = temp;
                 textView_dateStart.setText(date);
                 break;
             case 2:
-                endyear = year;
-                endmonth = monthOfYear - 1;
-                endday = dayOfMonth;
+                temp.set(year, monthOfYear, dayOfMonth, end.get(Calendar.HOUR_OF_DAY), end.get(Calendar.MINUTE));
+                Log.e("Date parse", year + "年" + (monthOfYear + 1) + "月" + dayOfMonth + "日" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE));
+                if (start.getTimeInMillis() > temp.getTimeInMillis()) {
+                    checkdate();
+                    return;
+                }
+                end = temp;
                 textView_dateEnd.setText(date);
                 break;
             default:
@@ -177,13 +178,20 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
         String time = hourString + ":" + minuteString;
         switch (current_time) {
             case 1:
-                starthour = hourOfDay;
-                startmin = minute;
+                temp.set(start.get(Calendar.YEAR), start.get(Calendar.MONTH), start.get(Calendar.DATE), hourOfDay, minute);
+                if (temp.getTimeInMillis() > end.getTimeInMillis()) {
+                    checktime();
+                    return;
+                }
+                start = temp;
                 textView_timeStart.setText(time);
                 break;
             case 2:
-                endhour = hourOfDay;
-                endmin = minute;
+                temp.set(end.get(Calendar.YEAR), end.get(Calendar.MONTH), end.get(Calendar.DATE), hourOfDay, minute);
+                if(start.getTimeInMillis() > temp.getTimeInMillis()){
+                    checktime();
+                    return;
+                }
                 textView_timeEnd.setText(time);
                 break;
             default:
@@ -197,7 +205,50 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                 .setAction("確定", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (current_date == 1) {
+                            DatePickerDialog dpd = DatePickerDialog.newInstance(
+                                    AddScheduleActivity.this,
+                                    start.get(Calendar.YEAR),
+                                    start.get(Calendar.MONTH),
+                                    start.get(Calendar.DATE)
+                            );
+                            dpd.show(getFragmentManager(), "Datepickerdialog");
+                        }else{
+                            DatePickerDialog dpd = DatePickerDialog.newInstance(
+                                    AddScheduleActivity.this,
+                                    end.get(Calendar.YEAR),
+                                    end.get(Calendar.MONTH),
+                                    end.get(Calendar.DATE)
+                            );
+                            dpd.show(getFragmentManager(), "Datepickerdialog");
+                        }
+                    }
+                });
+        snackbar.getView().setBackgroundColor(Color.rgb(239, 83, 80));
+        snackbar.show();
+    }
 
+    private void checktime() {
+        final Snackbar snackbar = Snackbar
+                .make(linearLayout, "結束時間必須大於開始時間", Snackbar.LENGTH_INDEFINITE)
+                .setAction("確定", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (current_time == 1) {
+                            TimePickerDialog tpd = TimePickerDialog.newInstance(
+                                    AddScheduleActivity.this,
+                                    start.get(Calendar.HOUR_OF_DAY),
+                                    start.get(Calendar.MINUTE),
+                                    false);
+                            tpd.show(getFragmentManager(), "Timepickerdialog");
+                        }else{
+                            TimePickerDialog tpd = TimePickerDialog.newInstance(
+                                    AddScheduleActivity.this,
+                                    end.get(Calendar.HOUR_OF_DAY),
+                                    end.get(Calendar.MINUTE),
+                                    false);
+                            tpd.show(getFragmentManager(), "Timepickerdialog");
+                        }
                     }
                 });
         snackbar.getView().setBackgroundColor(Color.rgb(239, 83, 80));
@@ -210,26 +261,6 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (startyear > endyear) {
-                    checkdate();
-                    return;
-                }
-                if (startmonth > endmonth) {
-                    checkdate();
-                    return;
-                }
-                if (startday > endday) {
-                    checkdate();
-                    return;
-                }
-                if (starthour > endhour) {
-                    checkdate();
-                    return;
-                }
-                if (startmin > endmin) {
-                    checkdate();
-                    return;
-                }
                 if (textView_location.getText().toString().equals("") || editText_content.getText().toString().equals("") ||
                         editText_title.getText().toString().equals("") || textView_dateStart.getText().toString().equals("") ||
                         textView_timeStart.getText().toString().equals("") || textView_dateEnd.getText().toString().equals("") ||
