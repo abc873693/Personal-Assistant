@@ -14,13 +14,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import rainvisitor.personal_assistant.DetailScheduleActivity;
@@ -41,7 +45,7 @@ public class SchedulesFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String DATABASE_TAG = "Firebase Database";
-    private static final String USER_UID = "4wCRmeLUdtUBREByNn1GHFdFsnl2";
+    private static String USER_UID = "4wCRmeLUdtUBREByNn1GHFdFsnl2";
     private Context context;
     private RecyclerView recyclerView;
     private ArrayList<ScheduleModel> lists = new ArrayList<>();
@@ -78,6 +82,19 @@ public class SchedulesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid;
+        if (user != null) {
+            String name = user.getDisplayName();
+            String email = user.getEmail();
+            Uri photoUrl = user.getPhotoUrl();
+            // The user's ID, unique to the Firebase project. Do NOT use this value to
+            // authenticate with your backend server, if you have one. Use
+            // FirebaseUser.getToken() instead.
+            uid = user.getUid().toString();
+            USER_UID = user.getUid().toString();
+            Log.e("getCurrentUser", "uid = " + uid + "  name = " + name + "  email = " + email + "  photoUrl = " + photoUrl);
+        } else uid = "0";
         View view = inflater.inflate(R.layout.fragment_schedules, container, false);
         context = getActivity();
         recyclerView = (RecyclerView) view.findViewById(R.id.listView);
@@ -153,14 +170,15 @@ public class SchedulesFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 lists.clear();
-                Log.e(DATABASE_TAG, "onDataChange");
+                Log.e(DATABASE_TAG, dataSnapshot + "");
                 for (String uid : schedules) {
                     ScheduleModel model = new ScheduleModel();
                     DataSnapshot ds = dataSnapshot.child(uid);
                     model.title = ds.child("title").getValue().toString();
-                    model.date_begin = ds.child("time").child("begin").getValue().toString();
-                    model.date_end = ds.child("time").child("end").getValue().toString();
+                    model.date_begin = getDate(Long.parseLong(ds.child("time").child("begin").getValue().toString()), "yyyy年 MM月 dd日 hh點mm分");
+                    model.date_end = getDate(Long.parseLong(ds.child("time").child("end").getValue().toString().toString()), "yyyy年 MM月 dd日 hh點mm分");
                     model.content = ds.child("content").getValue().toString();
+                    model.location = ds.child("location").child("name").getValue().toString();
                     model.uid = uid;
                     Log.e(DATABASE_TAG, "Value" + ds.getValue().toString());
                     Log.e(DATABASE_TAG, uid + " title=" + model.title);
@@ -182,6 +200,16 @@ public class SchedulesFragment extends Fragment {
         });
     }
 
+    public static String getDate(long milliSeconds, String dateFormat) {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
+
     public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
 
         private List<ScheduleModel> contactList;
@@ -198,13 +226,13 @@ public class SchedulesFragment extends Fragment {
         @Override
         public void onBindViewHolder(ContactViewHolder holder, final int position) {
             holder.textView_title.setText(lists.get(position).title);
-            holder.textView_time.setText(lists.get(position).date_begin + "到" + lists.get(position).date_end);
+            holder.textView_time.setText(lists.get(position).date_begin + " ~ " + lists.get(position).date_end + " At " + lists.get(position).location);
             holder.textView_content.setText(lists.get(position).content);
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int itemPosition = recyclerView.getChildLayoutPosition(view);
-                    Log.d("cardView onClick","itemPosition="+itemPosition);
+                    Log.d("cardView onClick", "itemPosition=" + itemPosition);
                     Intent intent = new Intent(context, DetailScheduleActivity.class);
                     intent.putExtra("activity_uid", lists.get(itemPosition).uid);
                     startActivity(intent);
