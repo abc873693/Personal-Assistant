@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -29,6 +30,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -53,6 +56,9 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     private LinearLayout linearLayout;
     private Calendar now;
     private int current_date = 0, current_time = 0;
+
+    private String sdatestring,edatestring,stimestring,etimestring;
+    private long stimestamp, etimestamp;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -111,6 +117,8 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         String timeS = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
         String timeE = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
 
+        sdatestring = edatestring = now.get(Calendar.YEAR) + "/" + now.get(Calendar.MONTH) + "/" + now.get(Calendar.DAY_OF_MONTH);
+        stimestring = etimestring = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
 
         textView_dateStart.setText(date);
         textView_dateEnd.setText(date);
@@ -146,6 +154,13 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                 dpd.show(getFragmentManager(), "Datepickerdialog");
             }
         });
+        Button btn_add = (Button) fl.findViewById(R.id.btn_add);
+        /*btn_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addSchedule();
+            }
+        });*/
         textView_timeStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -224,14 +239,16 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String date = +dayOfMonth+"/"+(++monthOfYear)+"/"+year;
+        String date = year + "年" + (++monthOfYear) + "月" + (dayOfMonth) + "日";
         Log.e("onDateSet",view.toString());
         switch (current_date){
             case 1:
                 textView_dateStart.setText(date);
+                sdatestring = year + "/" + (++monthOfYear) + "/" + (dayOfMonth);
                 break;
             case 2:
                 textView_dateEnd.setText(date);
+                edatestring = year + "/" + (++monthOfYear) + "/" + (dayOfMonth);
                 break;
             default:
                 break;
@@ -241,14 +258,15 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
         String hourString = hourOfDay < 10 ? "0"+hourOfDay : ""+hourOfDay;
         String minuteString = minute < 10 ? "0"+minute : ""+minute;
-        String secondString = second < 10 ? "0"+second : ""+second;
         String time = hourString+":"+minuteString;
         switch (current_time){
             case 1:
                 textView_timeStart.setText(time);
+                stimestring = time;
                 break;
             case 2:
                 textView_timeEnd.setText(time);
+                etimestring = time;
                 break;
             default:
                 break;
@@ -266,6 +284,19 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     private void addSchedule() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        Calendar startdtoc = Calendar.getInstance();
+        try{
+            startdtoc.setTime(df.parse(sdatestring + " " + stimestring));
+            stimestamp = startdtoc.getTimeInMillis();
+            startdtoc.setTime(df.parse(edatestring + " " + etimestring));
+            etimestamp = startdtoc.getTimeInMillis();
+        }catch(ParseException e){
+            e.printStackTrace();
+        }
+
+
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -285,7 +316,19 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                                 }
                             });
                     snackbar.show();
-                } else {
+                }
+                else if(stimestamp > etimestamp) {
+                    Snackbar snackbar = Snackbar
+                            .make(linearLayout, "開始時間不得大於結束時間！", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("確定", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                }
+                            });
+                    snackbar.show();
+
+                }else{
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     String uid;
                     if (user != null) {
@@ -302,12 +345,11 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                     DatabaseReference mDatabase = dataSnapshot.child("activity").getRef();
                     DatabaseReference userDatabase = dataSnapshot.child("users").child(uid).getRef();
                     count = dataSnapshot.child("activity").getChildrenCount();
-                    Log.e("count", count + "");
                     DatabaseReference dr = mDatabase.child((count + 1) + "").getRef();
                     dr.child("location").setValue(textView_location.getText() + "");
                     dr.child("title").setValue(editText_title.getText() + "");
-                    dr.child("time").child("begin").setValue(textView_dateStart.getText() + " " + textView_timeStart.getText() + "");
-                    dr.child("time").child("end").setValue(textView_dateEnd.getText() + " " + textView_timeEnd.getText() + "");
+                    dr.child("time").child("begin").setValue(stimestamp);
+                    dr.child("time").child("end").setValue(etimestamp);
                     dr.child("members").child("0").child("authority").setValue("creator");
                     dr.child("members").child("0").child("uid").setValue(uid);
                     long count_activity = dataSnapshot.child("users").child(uid).child("activtys").getChildrenCount();
