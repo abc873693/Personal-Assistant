@@ -206,20 +206,21 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                     }
                     else uid = "0";
                     DatabaseReference mDatabase = dataSnapshot.child("activity").getRef();
-                    DatabaseReference userDatabase = dataSnapshot.child(uid).getRef();
+                    DatabaseReference userDatabase = dataSnapshot.child("users").child(uid).getRef();
                     count = dataSnapshot.child("activity").getChildrenCount();
                     Log.e("count", count + "");
                     DatabaseReference dr = mDatabase.child((count + 1) + "").getRef();
                     dr.child("location").setValue(textView_location.getText() + "");
                     dr.child("content").setValue(editText_content.getText() + "");
                     dr.child("title").setValue(editText_title.getText() + "");
-                    dr.child("time").child("start").setValue(textView_dateStart.getText() + " " + textView_timeStart.getText() + "");
+                    dr.child("time").child("begin").setValue(textView_dateStart.getText() + " " + textView_timeStart.getText() + "");
                     dr.child("time").child("end").setValue(textView_dateEnd.getText() + " " + textView_timeEnd.getText() + "");
                     dr.child("members").child("0").child("authority").setValue("creator");
                     dr.child("members").child("0").child("uid").setValue(uid);
                     finish();
                     long count_activity = dataSnapshot.child("users").child(uid).child("activtys").getChildrenCount();
-                    userDatabase.child("users").child(uid).child("activtys").child((count_activity+1)+"").child("uid").setValue((count + 1) + "");
+                    Log.e("count_activity","count_activity" + count_activity);
+                    userDatabase.child("activtys").child((count_activity+1)+"").child("uid").setValue((count + 1) + "");
                 }
             }
 
