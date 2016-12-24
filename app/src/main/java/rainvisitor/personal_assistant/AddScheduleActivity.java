@@ -1,5 +1,6 @@
 package rainvisitor.personal_assistant;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,14 +23,14 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
 
-public class AddScheduleActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener{
+public class AddScheduleActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     private long count = 0;
     private android.support.v7.widget.Toolbar toolbar;
     private EditText editText_title, editText_content;
     private TextView textView_location, textView_dateStart, textView_timeStart, textView_dateEnd, textView_timeEnd;
     private LinearLayout linearLayout;
-    private Calendar now ;
-    private int current_date = 0 , current_time = 0;
+    private Calendar now;
+    private int current_date = 0, current_time = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +39,9 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
         initToolbar();
         initView();
         now = Calendar.getInstance();
-        String date = now.get(Calendar.YEAR) + "年" +now.get(Calendar.MONTH) + "月" + now.get(Calendar.DAY_OF_MONTH) + "日" ;
-        String timeS = now.get(Calendar.HOUR_OF_DAY) + ":" +now.get(Calendar.MINUTE);
-        String timeE = now.get(Calendar.HOUR_OF_DAY) + ":" +now.get(Calendar.MINUTE);
+        String date = now.get(Calendar.YEAR) + "年" + now.get(Calendar.MONTH) + "月" + now.get(Calendar.DAY_OF_MONTH) + "日";
+        String timeS = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
+        String timeE = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
         textView_dateStart.setText(date);
         textView_dateEnd.setText(date);
         textView_timeStart.setText(timeS);
@@ -137,9 +140,9 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String date = +dayOfMonth+"/"+(++monthOfYear)+"/"+year;
-        Log.e("onDateSet",view.toString());
-        switch (current_date){
+        String date = +dayOfMonth + "/" + (++monthOfYear) + "/" + year;
+        Log.e("onDateSet", view.toString());
+        switch (current_date) {
             case 1:
                 textView_dateStart.setText(date);
                 break;
@@ -152,11 +155,11 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
     }
 
     public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-        String hourString = hourOfDay < 10 ? "0"+hourOfDay : ""+hourOfDay;
-        String minuteString = minute < 10 ? "0"+minute : ""+minute;
-        String secondString = second < 10 ? "0"+second : ""+second;
-        String time = hourString+":"+minuteString;
-        switch (current_time){
+        String hourString = hourOfDay < 10 ? "0" + hourOfDay : "" + hourOfDay;
+        String minuteString = minute < 10 ? "0" + minute : "" + minute;
+        String secondString = second < 10 ? "0" + second : "" + second;
+        String time = hourString + ":" + minuteString;
+        switch (current_time) {
             case 1:
                 textView_timeStart.setText(time);
                 break;
@@ -174,18 +177,12 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    if (snap.getKey() == "activity") count = snap.getChildrenCount();
-                    Log.e("count", count + "");
-                }
-                DatabaseReference mDatabase;
-
-                mDatabase = FirebaseDatabase.getInstance().getReference();
-                if (textView_location.getText() + "" == "" || editText_content.getText() + "" == "" || editText_title.getText() + "" == "" ||
-                        textView_dateStart.getText() + "" == "" || textView_timeStart.getText() + "" == "" || textView_dateEnd.getText() + "" == "" || textView_timeEnd.getText() + "" == "") {
-
+                if (textView_location.getText().toString().equals("") || editText_content.getText().toString().equals("") ||
+                        editText_title.getText().toString().equals("") || textView_dateStart.getText().toString().equals("") ||
+                        textView_timeStart.getText().toString().equals("") || textView_dateEnd.getText().toString().equals("") ||
+                        textView_timeEnd.getText().toString().equals("")) {
                     final Snackbar snackbar = Snackbar
-                            .make(linearLayout, "請物留空", Snackbar.LENGTH_INDEFINITE)
+                            .make(linearLayout, "請勿留空", Snackbar.LENGTH_INDEFINITE)
                             .setAction("確定", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -194,13 +191,35 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                             });
                     snackbar.show();
                 } else {
-                    DatabaseReference dr = mDatabase.child("activity").child((count + 1) + "");
-                    dr.child("textView_location").setValue(textView_location.getText() + "");
-                    dr.child("editText_content").setValue(editText_content.getText() + "");
-                    dr.child("editText_title").setValue(editText_title.getText() + "");
-                    dr.child("time").child("textView_timeStart").setValue(textView_dateStart.getText() + " " + textView_timeStart.getText() + "");
-                    dr.child("time").child("textView_timeEnd").setValue(textView_dateEnd.getText() + " " + textView_timeEnd.getText() + "");
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    String uid;
+                    if (user != null) {
+                        String name = user.getDisplayName();
+                        String email = user.getEmail();
+                        Uri photoUrl = user.getPhotoUrl();
+
+                        // The user's ID, unique to the Firebase project. Do NOT use this value to
+                        // authenticate with your backend server, if you have one. Use
+                        // FirebaseUser.getToken() instead.
+                        uid = user.getUid();
+                        Log.e("getCurrentUser","uid = "  + uid +"  name = "  + name +"  email = "  + email +"  photoUrl = "  + photoUrl );
+                    }
+                    else uid = "0";
+                    DatabaseReference mDatabase = dataSnapshot.child("activity").getRef();
+                    DatabaseReference userDatabase = dataSnapshot.child(uid).getRef();
+                    count = dataSnapshot.child("activity").getChildrenCount();
+                    Log.e("count", count + "");
+                    DatabaseReference dr = mDatabase.child((count + 1) + "").getRef();
+                    dr.child("location").setValue(textView_location.getText() + "");
+                    dr.child("content").setValue(editText_content.getText() + "");
+                    dr.child("title").setValue(editText_title.getText() + "");
+                    dr.child("time").child("start").setValue(textView_dateStart.getText() + " " + textView_timeStart.getText() + "");
+                    dr.child("time").child("end").setValue(textView_dateEnd.getText() + " " + textView_timeEnd.getText() + "");
+                    dr.child("members").child("0").child("authority").setValue("creator");
+                    dr.child("members").child("0").child("uid").setValue(uid);
                     finish();
+                    long count_activity = dataSnapshot.child("users").child(uid).child("activtys").getChildrenCount();
+                    userDatabase.child("users").child(uid).child("activtys").child((count_activity+1)+"").child("uid").setValue((count + 1) + "");
                 }
             }
 
@@ -215,6 +234,6 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
     public void onResume() {
         super.onResume();
         DatePickerDialog dpd = (DatePickerDialog) getFragmentManager().findFragmentByTag("Datepickerdialog");
-        if(dpd != null) dpd.setOnDateSetListener(this);
+        if (dpd != null) dpd.setOnDateSetListener(this);
     }
 }

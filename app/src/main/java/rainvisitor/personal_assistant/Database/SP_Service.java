@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 
 public class SP_Service {
     private SharedPreferences data = null;
+    private final String USEUID = "user_uid";
     private final String USERNAME = "username";
     private final String USEREMAIL = "user_email";
     private final String USERPHOTOURL = "user_photoURL";
@@ -17,6 +18,13 @@ public class SP_Service {
 
     public SP_Service(Context context){
         data = context.getSharedPreferences("data", 0);
+    }
+
+    public void userUid_set(String str){
+        data.edit().putString(USEUID, str).apply();
+    }
+    public String userUid_get(){
+        return data.getString(USEUID,"");
     }
 
     public void username_set(String str){
