@@ -212,18 +212,8 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
 
 
 
-        /*//Todo: RecycleView
-        recyclerView = (RecyclerView) fl.findViewById(R.id.recycleview_picture);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        MyAdapter adapter = new MyAdapter(dataset);
-        recyclerView.setAdapter(adapter);*/
+        //Todo: RecycleView
 
-
-        //View view = inflater.inflate(R.layout.fragment_schedules, container, false);
         context = fl.getContext();
         recyclerView = (RecyclerView) fl.findViewById(R.id.recycleview_picture);
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
@@ -514,6 +504,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                     dr.child("content").setValue("內容");
                     dr.child("time").child("begin").setValue(start.getTimeInMillis());
                     dr.child("time").child("end").setValue(end.getTimeInMillis());
+                    dr.child("imagecount").setValue(images.size());
                     /*long count_activity = dataSnapshot.child("users").child(uid).child("activtys").getChildrenCount();
                     userDatabase.child("activtys").child((count_activity + 1) + "").child("uid").setValue((count + 1) + "");*/
                     detailScheduleActivity.changeContent(DetailScheduleActivity.FRAGMENT.main);
