@@ -187,12 +187,14 @@ public class ContentFragment extends Fragment {
                                     @Override
                                     protected void onPostExecute(Bitmap result){
                                         images.add(result);
+                                        ContentFragment.MyAdapter MyAdapter = new ContentFragment.MyAdapter(images);
+                                        recyclerView.setAdapter(MyAdapter);
                                         super.onPostExecute(result);
                                     }
                                 }.execute(uri.toString());
 
 
-                            Toast.makeText(fl.getContext(), "Image Downloaded.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(fl.getContext(), "Image Downloading...", Toast.LENGTH_LONG).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -203,8 +205,6 @@ public class ContentFragment extends Fragment {
                     });
         }
         //Todo:Loop End
-        ContentFragment.MyAdapter MyAdapter = new ContentFragment.MyAdapter(images);
-        recyclerView.setAdapter(MyAdapter);
     }
 
     private Bitmap getBitmapFromURL(String imageurl) {
