@@ -41,7 +41,7 @@ public class MainFragment extends Fragment {
     private ArrayList<String> activitys = new ArrayList<>();
     private ContactAdapter customAdapter;
     private DetailScheduleActivity detailScheduleActivity;
-
+    private DatabaseReference myRef;
     public MainFragment() {
         // Required empty public constructor
     }
@@ -97,6 +97,12 @@ public class MainFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+
+    }
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -104,7 +110,8 @@ public class MainFragment extends Fragment {
 
     private void getActivityeData() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("activity");
+        myRef = database.getReference("activity");
+
         Log.e(DATABASE_TAG, "getUserActivity...");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
