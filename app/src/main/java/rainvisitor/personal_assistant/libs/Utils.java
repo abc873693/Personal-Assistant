@@ -28,6 +28,7 @@ import rainvisitor.personal_assistant.R;
  */
 
 public class Utils {
+    public static int RESULT_LOCATION = 87;
     public static boolean isNetworkConnected(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
