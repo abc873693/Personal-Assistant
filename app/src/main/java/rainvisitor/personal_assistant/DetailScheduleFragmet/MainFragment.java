@@ -69,7 +69,6 @@ public class MainFragment extends Fragment {
         detailScheduleActivity = (DetailScheduleActivity) getActivity();
         recyclerView = (RecyclerView) view.findViewById(R.id.listview);
         recyclerView.setNestedScrollingEnabled(false);
-        lists.clear();
         getActivityeData();
         return view;
     }
