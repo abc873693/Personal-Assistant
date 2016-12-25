@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -139,6 +140,8 @@ public class NotesFragment extends Fragment {
                 for (DataSnapshot ds : dataSnapshot.child("activity").getChildren()) {
                     AllScheduleModel model = new AllScheduleModel();
                     String num = ds.getKey().toString();
+                    model.num = num;
+                    model.join = false;
                     model.title = ds.child("title").getValue().toString();
                     model.content = ds.child("content").getValue().toString();
                     model.date_begin = Long.parseLong(ds.child("time").child("begin").getValue().toString());
@@ -152,8 +155,18 @@ public class NotesFragment extends Fragment {
                             break;
                         }
                     }
+                    long count = 0;
+                    count = dataSnapshot.child("users").child(USER_UID).child("activtys").getChildrenCount();
+                    for (long i = 1; i <= count; i++) {
+                        String get = dataSnapshot.child("users").child(USER_UID).child("activtys").child(i + "").child("uid").getValue().toString();
+                        if (get.equals(num)) {
+                            model.join = true;
+                            Log.e("Get", get);
+                            break;
+                        }
+                    }
                     lists.add(model);
-                    Log.e(DATABASE_TAG, lists + ":");
+                    Log.e("List", model.join + ":");
                     //adapter.add(ds.child("name").getValue().toString());
                 }
                /* if (schedules.size() != 0) {
@@ -199,18 +212,36 @@ public class NotesFragment extends Fragment {
         public void onBindViewHolder(ContactAdapter.ContactViewHolder holder, final int position) {
             String begin = getDate(lists.get(position).date_begin, "yyyy年 MM月 dd日 hh點mm分");
             String end = getDate(lists.get(position).date_end, "yyyy年 MM月 dd日 hh點mm分");
-            holder.textView_creator.setText(lists.get(position).creator+"");
-            holder.textView_title.setText(lists.get(position).creator + lists.get(position).title);
+            holder.textView_creator.setText(lists.get(position).creator + "");
+            holder.textView_title.setText(lists.get(position).title);
             holder.textView_time.setText(begin + " ~ " + end + " At " + lists.get(position).location);
             holder.textView_content.setText(lists.get(position).content);
-            holder.cardView.setOnClickListener(new View.OnClickListener() {
+            if (!lists.get(position).join) {
+                holder.button_join.setText("我要參加");
+                holder.button_join.setEnabled(true);
+            } else {
+                holder.button_join.setText("已參加");
+                holder.button_join.setEnabled(false);
+            }
+            holder.button_join.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    /*int itemPosition = recyclerView.getChildLayoutPosition(view);
-                    Log.d("cardView onClick", "itemPosition=" + itemPosition);
-                    Intent intent = new Intent(context, DetailScheduleActivity.class);
-                    intent.putExtra("activity_uid", lists.get(itemPosition).uid);
-                    startActivity(intent);*/
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference myRef = database.getReference();
+                    myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            DatabaseReference userDatabase = dataSnapshot.child("users").child(USER_UID).getRef();
+                            long count_activity = dataSnapshot.child("users").child(USER_UID).child("activtys").getChildrenCount();
+                            Log.e("count_activity", "count_activity" + count_activity);
+                            userDatabase.child("activtys").child((count_activity + 1) + "").child("uid").setValue(lists.get(position).num);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
             });
         }
@@ -228,6 +259,7 @@ public class NotesFragment extends Fragment {
             TextView textView_time;
             TextView textView_content;
             TextView textView_creator;
+            Button button_join;
             CardView cardView;
 
             private ContactViewHolder(View convertView) {
@@ -236,6 +268,7 @@ public class NotesFragment extends Fragment {
                 textView_time = (TextView) convertView.findViewById(R.id.textView_time);
                 textView_content = (TextView) convertView.findViewById(R.id.textView_content);
                 textView_creator = (TextView) convertView.findViewById(R.id.textview_creator);
+                button_join = (Button) convertView.findViewById(R.id.button_join);
                 cardView = (CardView) convertView.findViewById(R.id.card_view);
             }
         }

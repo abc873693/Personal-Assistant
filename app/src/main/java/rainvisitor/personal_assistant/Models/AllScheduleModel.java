@@ -11,4 +11,6 @@ public class AllScheduleModel {
     public String content;
     public String location;
     public String creator;
+    public Boolean join=false;
+    public String num;
 }
