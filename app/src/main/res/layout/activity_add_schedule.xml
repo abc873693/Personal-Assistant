@@ -84,7 +84,7 @@
             android:textColor="@color/black"
             android:textColorHint="@color/black_dividers"
             android:gravity="center"
-            android:text="地址"/>
+            android:text="請選擇位置"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

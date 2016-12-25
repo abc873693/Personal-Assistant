@@ -1,5 +1,6 @@
 package rainvisitor.personal_assistant;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -24,6 +26,9 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
 
+import static rainvisitor.personal_assistant.libs.Utils.REQUEST_LOCATION;
+import static rainvisitor.personal_assistant.libs.Utils.RESULT_LOCATION;
+
 public class AddScheduleActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     private long count = 0;
     private android.support.v7.widget.Toolbar toolbar;
@@ -32,6 +37,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
     private LinearLayout linearLayout;
     private int current_date = 0, current_time = 0;
     private Calendar now, start, end, temp;
+    private LatLng latLng = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +45,6 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
         setContentView(R.layout.activity_add_schedule);
         initToolbar();
         initView();
-
 
 
         now = Calendar.getInstance();
@@ -111,6 +116,14 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                 tpd.show(getFragmentManager(), "Timepickerdialog");
             }
         });
+
+        textView_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AddScheduleActivity.this, MapsActivity.class);
+                startActivityForResult(intent, REQUEST_LOCATION);
+            }
+        });
     }
 
     private void initView() {
@@ -157,10 +170,10 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
             case 1:
                 temp.set(year, monthOfYear, dayOfMonth, start.get(Calendar.HOUR_OF_DAY), start.get(Calendar.MINUTE));
                 Log.e("Date parse", year + "年" + (monthOfYear + 1) + "月" + dayOfMonth + "日" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE));
-                Log.e("End",end.getTimeInMillis()+"");
-                Log.e("Temp",temp.getTimeInMillis()+"");
+                Log.e("End", end.getTimeInMillis() + "");
+                Log.e("Temp", temp.getTimeInMillis() + "");
                 if (temp.getTimeInMillis() - end.getTimeInMillis() > 60000) {
-                    current_date=1;
+                    current_date = 1;
                     checkdate();
                     return;
                 }
@@ -170,10 +183,10 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
             case 2:
                 temp.set(year, monthOfYear, dayOfMonth, end.get(Calendar.HOUR_OF_DAY), end.get(Calendar.MINUTE));
                 Log.e("Date parse", year + "年" + (monthOfYear + 1) + "月" + dayOfMonth + "日" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE));
-                Log.e("Start",start.getTimeInMillis()+"");
-                Log.e("Temp",temp.getTimeInMillis()+"");
+                Log.e("Start", start.getTimeInMillis() + "");
+                Log.e("Temp", temp.getTimeInMillis() + "");
                 if (start.getTimeInMillis() - temp.getTimeInMillis() > 60000) {
-                    current_date=2;
+                    current_date = 2;
                     checkdate();
                     return;
                 }
@@ -194,7 +207,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
             case 1:
                 temp.set(start.get(Calendar.YEAR), start.get(Calendar.MONTH), start.get(Calendar.DATE), hourOfDay, minute);
                 if (temp.getTimeInMillis() - end.getTimeInMillis() > 60000) {
-                    current_time=1;
+                    current_time = 1;
                     checktime();
                     return;
                 }
@@ -203,8 +216,8 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                 break;
             case 2:
                 temp.set(end.get(Calendar.YEAR), end.get(Calendar.MONTH), end.get(Calendar.DATE), hourOfDay, minute);
-                if(start.getTimeInMillis() - temp.getTimeInMillis() > 60000){
-                    current_time=2;
+                if (start.getTimeInMillis() - temp.getTimeInMillis() > 60000) {
+                    current_time = 2;
                     checktime();
                     return;
                 }
@@ -230,7 +243,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                                     start.get(Calendar.DATE)
                             );
                             dpd.show(getFragmentManager(), "Datepickerdialog");
-                        }else{
+                        } else {
                             DatePickerDialog dpd = DatePickerDialog.newInstance(
                                     AddScheduleActivity.this,
                                     end.get(Calendar.YEAR),
@@ -258,7 +271,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                                     start.get(Calendar.MINUTE),
                                     false);
                             tpd.show(getFragmentManager(), "Timepickerdialog");
-                        }else{
+                        } else {
                             TimePickerDialog tpd = TimePickerDialog.newInstance(
                                     AddScheduleActivity.this,
                                     end.get(Calendar.HOUR_OF_DAY),
@@ -310,7 +323,16 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                     count = dataSnapshot.child("activity").getChildrenCount();
                     Log.e("count", count + "");
                     DatabaseReference dr = mDatabase.child((count + 1) + "").getRef();
-                    dr.child("location").child("name").setValue(textView_location.getText() + "");
+                    if(textView_location.getText().equals("請選擇位置")){
+                        dr.child("location").child("name").setValue("");
+                        dr.child("location").child("enabled").setValue(false);
+                    }
+                    else {
+                        dr.child("location").child("name").setValue(textView_location.getText());
+                        dr.child("location").child("Longitude").setValue(latLng.longitude);
+                        dr.child("location").child("Latitude").setValue(latLng.latitude);
+                        dr.child("location").child("enabled").setValue(true);
+                    }
                     dr.child("content").setValue(editText_content.getText() + "");
                     dr.child("title").setValue(editText_title.getText() + "");
                     dr.child("time").child("begin").setValue(start.getTimeInMillis());
@@ -336,5 +358,20 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
         super.onResume();
         DatePickerDialog dpd = (DatePickerDialog) getFragmentManager().findFragmentByTag("Datepickerdialog");
         if (dpd != null) dpd.setOnDateSetListener(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_LOCATION) {
+            if (resultCode == RESULT_LOCATION) {
+                Double Longitude = data.getDoubleExtra("Longitude", 0);
+                Double Latitude = data.getDoubleExtra("Latitude", 0);
+                String Name = data.getStringExtra("Name");
+                textView_location.setText(Name);
+                latLng = new LatLng(Latitude, Longitude);
+                Log.e("Location", "Name  = " + Name + " Longitude  = " + Longitude + " Latitude  = " + Latitude);
+            }
+        }
     }
 }

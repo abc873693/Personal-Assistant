@@ -69,5 +69,12 @@
             android:background="@color/grey_100">
         </FrameLayout>
     </android.support.v4.widget.NestedScrollView>
-
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/yellow_400"
+        app:srcCompat="@drawable/ic_navigation_black_24dp" />
 </android.support.design.widget.CoordinatorLayout>

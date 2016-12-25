@@ -95,12 +95,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void GetMyLocation() {
         mMap.clear();
-        Slect = false;
+        Slect = true;
         mLocation = mMap.getMyLocation();
         LatLng sydney = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
         mMap.addMarker(new MarkerOptions().position(sydney).title("您的位置"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        Slect_LatLng = sydney;
+        Slect_Name ="您的位置";
     }
 
     private void SendData() {
@@ -183,10 +185,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMapClick(LatLng point) {
                 mMap.clear();
-                Slect = false;
+                Slect = true;
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(point);
                 markerOptions.title("您選取的位置");
+                Slect_LatLng = point;
+                Slect_Name ="您選取的位置";
                 mMap.addMarker(markerOptions);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
