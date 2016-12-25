@@ -4,11 +4,29 @@ import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import rainvisitor.personal_assistant.Models.AllScheduleModel;
 import rainvisitor.personal_assistant.R;
 
 /**
@@ -23,6 +41,11 @@ public class NotesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
+    private static String USER_UID = "4wCRmeLUdtUBREByNn1GHFdFsnl2";
+    private static final String DATABASE_TAG = "Firebase Database";
+    private Context context;
+    private RecyclerView recyclerView;
+    private ArrayList<AllScheduleModel> lists = new ArrayList<>();
     private TextView textView;
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -53,10 +76,25 @@ public class NotesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid;
+        if (user != null) {
+            String name = user.getDisplayName();
+            String email = user.getEmail();
+            Uri photoUrl = user.getPhotoUrl();
+            // The user's ID, unique to the Firebase project. Do NOT use this value to
+            // authenticate with your backend server, if you have one. Use
+            // FirebaseUser.getToken() instead.
+            uid = user.getUid().toString();
+            USER_UID = user.getUid().toString();
+            Log.e("getCurrentUser", "uid = " + uid + "  name = " + name + "  email = " + email + "  photoUrl = " + photoUrl);
+        } else uid = "0";
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
-
-        textView = (TextView) view.findViewById(R.id.textView);
-        textView.setText(mParam1);
+        context = getActivity();
+        recyclerView = (RecyclerView) view.findViewById(R.id.list_AllView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
+        getUserActivity();
         // Inflate the layout for this fragment
         return view;
     }
@@ -88,5 +126,118 @@ public class NotesFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void getUserActivity() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+        Log.e(DATABASE_TAG, "getUserActivity...");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                lists.clear();
+                for (DataSnapshot ds : dataSnapshot.child("activity").getChildren()) {
+                    AllScheduleModel model = new AllScheduleModel();
+                    String num = ds.getKey().toString();
+                    model.title = ds.child("title").getValue().toString();
+                    model.content = ds.child("content").getValue().toString();
+                    model.date_begin = Long.parseLong(ds.child("time").child("begin").getValue().toString());
+                    model.date_end = Long.parseLong(ds.child("time").child("end").getValue().toString());
+                    model.location = ds.child("location").child("name").getValue().toString();
+                    String ID = ds.child("members").child("0").child("uid").getValue().toString();
+                    for (DataSnapshot dss : dataSnapshot.child("users").getChildren()) {
+                        if (dss.getKey().equals(ID)) {
+                            model.creator = dss.child("name").getValue().toString();
+                            Log.e("Bingo", model.creator);
+                            break;
+                        }
+                    }
+                    lists.add(model);
+                    Log.e(DATABASE_TAG, lists + ":");
+                    //adapter.add(ds.child("name").getValue().toString());
+                }
+               /* if (schedules.size() != 0) {
+                    getScheduleData();
+                }*/
+                ContactAdapter customAdapter = new NotesFragment.ContactAdapter(lists);
+                recyclerView.setAdapter(customAdapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(DATABASE_TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
+
+    public static String getDate(long milliSeconds, String dateFormat) {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
+
+    private class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
+
+        private List<AllScheduleModel> contactList;
+
+        private ContactAdapter(List<AllScheduleModel> contactList) {
+            this.contactList = contactList;
+        }
+
+        @Override
+        public int getItemCount() {
+            return contactList.size();
+        }
+
+        @Override
+        public void onBindViewHolder(ContactAdapter.ContactViewHolder holder, final int position) {
+            String begin = getDate(lists.get(position).date_begin, "yyyy年 MM月 dd日 hh點mm分");
+            String end = getDate(lists.get(position).date_end, "yyyy年 MM月 dd日 hh點mm分");
+            holder.textView_creator.setText(lists.get(position).creator+"");
+            holder.textView_title.setText(lists.get(position).creator + lists.get(position).title);
+            holder.textView_time.setText(begin + " ~ " + end + " At " + lists.get(position).location);
+            holder.textView_content.setText(lists.get(position).content);
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    /*int itemPosition = recyclerView.getChildLayoutPosition(view);
+                    Log.d("cardView onClick", "itemPosition=" + itemPosition);
+                    Intent intent = new Intent(context, DetailScheduleActivity.class);
+                    intent.putExtra("activity_uid", lists.get(itemPosition).uid);
+                    startActivity(intent);*/
+                }
+            });
+        }
+
+        @Override
+        public NotesFragment.ContactAdapter.ContactViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View itemView = LayoutInflater.
+                    from(viewGroup.getContext()).
+                    inflate(R.layout.list_allschedule, viewGroup, false);
+            return new NotesFragment.ContactAdapter.ContactViewHolder(itemView);
+        }
+
+        class ContactViewHolder extends RecyclerView.ViewHolder {
+            TextView textView_title;
+            TextView textView_time;
+            TextView textView_content;
+            TextView textView_creator;
+            CardView cardView;
+
+            private ContactViewHolder(View convertView) {
+                super(convertView);
+                textView_title = (TextView) convertView.findViewById(R.id.textView_title);
+                textView_time = (TextView) convertView.findViewById(R.id.textView_time);
+                textView_content = (TextView) convertView.findViewById(R.id.textView_content);
+                textView_creator = (TextView) convertView.findViewById(R.id.textview_creator);
+                cardView = (CardView) convertView.findViewById(R.id.card_view);
+            }
+        }
     }
 }
