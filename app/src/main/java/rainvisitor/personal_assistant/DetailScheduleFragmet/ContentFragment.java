@@ -85,9 +85,9 @@ public class ContentFragment extends Fragment {
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                DataSnapshot ds = dataSnapshot.child("activity").child(mParam1).child("acitivty_child").child(mParam2);
+                DataSnapshot ds = dataSnapshot.child("activity").child(detailScheduleActivity.current_activity_uid).child("activity_child").child(detailScheduleActivity.current_activity_uid);
                 content = ds.child("content").getValue().toString();
-                creator = ds.child("creator").getValue().toString();
+                //creator = ds.child("creator").getValue().toString();
                 title = ds.child("title").getValue().toString();
                 Log.e("mParam1", ds.child("content").getValue() + "");
                 detailScheduleActivity.collapsingToolbar.setTitle(title);

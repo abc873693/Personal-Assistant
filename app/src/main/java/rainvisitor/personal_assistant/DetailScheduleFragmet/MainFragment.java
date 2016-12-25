@@ -27,8 +27,6 @@ import rainvisitor.personal_assistant.DetailScheduleActivity;
 import rainvisitor.personal_assistant.Models.ActivityModel;
 import rainvisitor.personal_assistant.R;
 
-import static rainvisitor.personal_assistant.Drawer.SchedulesFragment.getDate;
-
 public class MainFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
@@ -42,6 +40,7 @@ public class MainFragment extends Fragment {
     private ContactAdapter customAdapter;
     private DetailScheduleActivity detailScheduleActivity;
     private DatabaseReference myRef;
+
     public MainFragment() {
         // Required empty public constructor
     }
@@ -69,6 +68,7 @@ public class MainFragment extends Fragment {
         context = getActivity();
         detailScheduleActivity = (DetailScheduleActivity) getActivity();
         recyclerView = (RecyclerView) view.findViewById(R.id.listview);
+        recyclerView.setNestedScrollingEnabled(false);
         getActivityeData();
         return view;
     }
@@ -111,7 +111,6 @@ public class MainFragment extends Fragment {
     private void getActivityeData() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference("activity");
-
         Log.e(DATABASE_TAG, "getUserActivity...");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -124,14 +123,21 @@ public class MainFragment extends Fragment {
                 detailScheduleActivity.textView_location.setText(Location);
                 for (DataSnapshot ds : dataSnapshot.child(UID).child("activity_child").getChildren()) {
                     ActivityModel model = new ActivityModel();
-                    model.title = ds.child("title").getValue().toString();
-                    model.date_begin = Long.valueOf(ds.child("time").child("begin").getValue().toString());
-                    model.date_end = Long.valueOf(ds.child("time").child("end").getValue().toString());
-                    model.content = ds.child("content").getValue().toString();
-                    model.uid = ds.getKey();
-                    Log.e(DATABASE_TAG, "Value" + ds.getValue().toString());
-                    Log.e(DATABASE_TAG, model.uid + " title=" + model.title   + " begin = " +model.date_begin + " end = " +model.date_end);
-                    lists.add(model);
+                    if (ds != null) {
+                        try {
+                            model.title = ds.child("title").getValue().toString();
+                            model.date_begin = Long.valueOf(ds.child("time").child("begin").getValue().toString());
+                            model.date_end = Long.valueOf(ds.child("time").child("end").getValue().toString());
+                            model.content = ds.child("content").getValue().toString();
+                            model.uid = ds.getKey();
+                            Log.e(DATABASE_TAG, model.uid + " title=" + model.title + " begin = " + model.date_begin + " end = " + model.date_end);
+                            lists.add(model);
+                            Log.d("ds", ds.toString());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        lists.add(model);
+                    }
                 }
                 for (int i = 0; i < lists.size() - 1; i++) {
                     for (int j = i + 1; j < lists.size(); j++) {
@@ -142,9 +148,6 @@ public class MainFragment extends Fragment {
                             lists.set(j, tmpA);
                         }
                     }
-                }
-                for (int i = 0; i < lists.size(); i++) {
-                    Log.w(DATABASE_TAG, "data = " + i + "  " + getDate(lists.get(i).date_begin, "yyyy年 MM月 dd日 hh點mm分"));
                 }
                 LinearLayoutManager llm = new LinearLayoutManager(context);
                 llm.setAutoMeasureEnabled(true);
@@ -196,7 +199,6 @@ public class MainFragment extends Fragment {
             end.setTimeInMillis(lists.get(position).date_end);
             long diff = begin.getTimeInMillis() - Previous.getTimeInMillis();
             long day = diff / (24 * 60 * 60 * 1000);
-            Log.e("day deffreince", "diff = " + diff + " day = " + day + "");
             String date;
             if (day > 0) {
                 date = begin.get(Calendar.YEAR) + "/" + (begin.get(Calendar.MONTH) + 1) + "/" + +begin.get(Calendar.DAY_OF_MONTH);
@@ -207,7 +209,6 @@ public class MainFragment extends Fragment {
             Previous = begin;
             String tmp1 = ((begin.get(Calendar.HOUR_OF_DAY) < 10) ? "0" : "") + begin.get(Calendar.HOUR_OF_DAY);
             String tmp2 = ((begin.get(Calendar.MINUTE) < 10) ? "0" : "") + begin.get(Calendar.MINUTE);
-            Log.w("date", date +"   " + tmp1 + ":" + tmp2 + "");
             holder.textView_date.setText(date);
             holder.textView_title.setText(lists.get(position).title);
             holder.textView_time.setText(tmp1 + ":" + tmp2);

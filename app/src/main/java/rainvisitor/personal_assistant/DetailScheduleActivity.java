@@ -1,6 +1,7 @@
 package rainvisitor.personal_assistant;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
@@ -41,7 +42,7 @@ public class DetailScheduleActivity extends AppCompatActivity implements
     public NestedScrollView nestedScrollView;
     public AppBarLayout appBarLayout;
     public FRAGMENT CurrentFragment = FRAGMENT.main;
-    public MenuItem menuItem_add,menuItem_share;
+    public MenuItem menuItem_add, menuItem_share;
     public String current_activity_uid;
     public String current_schedule_uid;
 
@@ -170,7 +171,12 @@ public class DetailScheduleActivity extends AppCompatActivity implements
         }
         if (fragment != null) {
             fragTrans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            fragTrans.replace(R.id.content_main, fragment);
+            FragmentManager fragmentManager = getFragmentManager();
+            Fragment currentFragment = fragmentManager.findFragmentByTag(CurrentFragment.toString());
+            if (currentFragment != null) {
+                fragTrans.remove(currentFragment);
+            }
+            fragTrans.replace(R.id.content_main, fragment, position.toString());
             fragTrans.commit();
         }
         CurrentFragment = position;
