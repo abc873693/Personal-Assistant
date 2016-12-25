@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -169,6 +170,7 @@ public class SchedulesFragment extends Fragment {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Toast.makeText(context, "Fetching Data...", Toast.LENGTH_LONG);
                 lists.clear();
                 Log.e(DATABASE_TAG, dataSnapshot + "");
                 for (String uid : schedules) {

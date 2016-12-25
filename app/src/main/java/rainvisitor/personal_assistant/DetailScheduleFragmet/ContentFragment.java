@@ -50,7 +50,7 @@ public class ContentFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private DetailScheduleActivity detailScheduleActivity;
-    private String content = "", creator = "", title = "", place = "";
+    private String content = "", creator = "", title = "", cost = "";
     Date date_begin, date_end;
 
     // TODO: Rename and change types of parameters
@@ -69,8 +69,8 @@ public class ContentFragment extends Fragment {
     private int imagecount;
     private String imagetime;
 
-
-    private TextView textView_creator, textView_time, textView_content;
+    private View line7;
+    private TextView textView_creator, textView_time, textView_content, textView_cost, textView_picture;
 
     public ContentFragment() {
         // Required empty public constructor
@@ -115,6 +115,9 @@ public class ContentFragment extends Fragment {
         textView_content = (TextView) fl.findViewById(R.id.textview_content);
         textView_creator = (TextView) fl.findViewById(R.id.textview_creator);
         textView_time = (TextView) fl.findViewById(R.id.textview_time);
+        textView_cost = (TextView) fl.findViewById(R.id.textview_cost);
+        textView_picture = (TextView) fl.findViewById(R.id.textview_picture);
+        line7 = (View) fl.findViewById(R.id.line7);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
 
@@ -135,12 +138,17 @@ public class ContentFragment extends Fragment {
                 creator = ds.child("creator").getValue().toString();
                 title = ds.child("title").getValue().toString();
                 imagecount = Integer.parseInt(ds.child("imagecount").getValue().toString());
-                imagetime =  ds.child("time").child("begin").getValue().toString();
-
+                imagetime = ds.child("time").child("begin").getValue().toString();
+                if (imagecount == 0) {
+                    textView_picture.setVisibility(View.GONE);
+                    line7.setVisibility(View.GONE);
+                }
+                cost = ds.child("cost").getValue().toString();
                 Log.e("imagecount", ds.child("imagecount").getValue() + "");
                 Log.e("mParam1", ds.child("content").getValue() + "");
                 detailScheduleActivity.collapsingToolbar.setTitle(title);
                 textView_content.setText(content);
+                textView_cost.setText("$ " + cost);
                 String begin = getDate(Long.parseLong(ds.child("time").child("begin").getValue().toString()), "yyyy年 MM月 dd日 hh點mm分");
                 String end = getDate(Long.parseLong(ds.child("time").child("end").getValue().toString()), "yyyy年 MM月 dd日 hh點mm分");
                 textView_time.setText(begin + "\n到\n" + end);
@@ -152,7 +160,7 @@ public class ContentFragment extends Fragment {
                     }
                 });
                 DownloadImage();
-                Log.d("Content", "title = " + title + " creator = "+ creator + " content = " + content);
+                Log.d("Content", "title = " + title + " creator = " + creator + " content = " + content);
             }
 
 
@@ -175,23 +183,23 @@ public class ContentFragment extends Fragment {
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                                Log.e("URI", uri.toString());
+                            Log.e("URI", uri.toString());
 
-                                new AsyncTask<String, Void, Bitmap>()
-                                {
-                                    @Override
-                                    protected Bitmap doInBackground(String... strings) {
-                                        String url = strings[0];
-                                        return getBitmapFromURL(url);
-                                    }
-                                    @Override
-                                    protected void onPostExecute(Bitmap result){
-                                        images.add(result);
-                                        ContentFragment.MyAdapter MyAdapter = new ContentFragment.MyAdapter(images);
-                                        recyclerView.setAdapter(MyAdapter);
-                                        super.onPostExecute(result);
-                                    }
-                                }.execute(uri.toString());
+                            new AsyncTask<String, Void, Bitmap>() {
+                                @Override
+                                protected Bitmap doInBackground(String... strings) {
+                                    String url = strings[0];
+                                    return getBitmapFromURL(url);
+                                }
+
+                                @Override
+                                protected void onPostExecute(Bitmap result) {
+                                    images.add(result);
+                                    ContentFragment.MyAdapter MyAdapter = new ContentFragment.MyAdapter(images);
+                                    recyclerView.setAdapter(MyAdapter);
+                                    super.onPostExecute(result);
+                                }
+                            }.execute(uri.toString());
 
 
                             Toast.makeText(fl.getContext(), "Image Downloading...", Toast.LENGTH_LONG).show();
@@ -254,7 +262,6 @@ public class ContentFragment extends Fragment {
     }
 
 
-
     class MyAdapter extends RecyclerView.Adapter<ContentFragment.MyAdapter.ViewHolder> {
         private List<Bitmap> BitMap;
 
@@ -264,7 +271,7 @@ public class ContentFragment extends Fragment {
 
         @Override
         public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                                   int viewType) {
+                                                       int viewType) {
             View itemLayoutView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_image, null);
 

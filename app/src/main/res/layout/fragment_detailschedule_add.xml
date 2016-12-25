@@ -49,6 +49,69 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/grey_400" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/grey_100"
+            android:orientation="horizontal"
+            android:paddingBottom="1dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/grey_100"
+                android:padding="5dp"
+                android:src="@drawable/ic_insert_comment_black_24dp"
+                android:id="@+id/imageView3" />
+
+            <EditText
+                android:id="@+id/edittext_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/grey_100"
+                android:gravity="top"
+                android:hint="@string/hint_content"
+                android:padding="12dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black_dividers"
+                android:textSize="24sp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_400" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/grey_100"
+            android:orientation="horizontal"
+            android:paddingBottom="1dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/grey_100"
+                android:padding="5dp"
+                android:src="@drawable/ic_local_atm_black_24dp" />
+
+            <EditText
+                android:id="@+id/edittext_cost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/grey_100"
+                android:gravity="top"
+                android:hint="@string/hint_cost"
+                android:padding="12dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black_dividers"
+                android:textSize="24sp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_400" />
 
         <LinearLayout
             android:layout_width="match_parent"
