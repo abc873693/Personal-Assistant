@@ -203,10 +203,12 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         MyAdapter adapter = new MyAdapter(dataset);
         recyclerView.setAdapter(adapter);*/
-        View view = inflater.inflate(R.layout.fragment_schedules, container, false);
-        context = getActivity();
-        recyclerView = (RecyclerView) view.findViewById(R.id.listView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
+        //View view = inflater.inflate(R.layout.fragment_schedules, container, false);
+        context = fl.getContext();
+        recyclerView = (RecyclerView) fl.findViewById(R.id.recycleview_picture);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setHasFixedSize(true);
 
         Button btn_add = (Button) fl.findViewById(R.id.btn_add);
@@ -252,7 +254,10 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                 images.add(bitmap);
                 AddFragment.MyAdapter MyAdapter = new AddFragment.MyAdapter(images);
                 recyclerView.setAdapter(MyAdapter);
+                LinearLayoutManager llm = new LinearLayoutManager(context);
+                llm.setOrientation(LinearLayoutManager.VERTICAL);
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
             } catch (FileNotFoundException e) {
                 Log.e("Exception", e.getMessage(), e);
             }
@@ -438,9 +443,9 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                         Log.e("getCurrentUser", "uid = " + uid + "  name = " + name + "  email = " + email + "  photoUrl = " + photoUrl);
                     } else uid = "0";
 
+                    //Todo: Insert Data
                     String UID = detailScheduleActivity.current_activity_uid;
                     DatabaseReference mDatabase = dataSnapshot.child("activity").child(UID).child("activity_child").getRef();
-                    //DatabaseReference userDatabase = dataSnapshot.child("users").child(uid).getRef();
                     count = dataSnapshot.child("activity").child(UID).child("activity_child").getChildrenCount();
                     Log.e("count",count+"123");
                     DatabaseReference dr = mDatabase.child((count) + "").getRef();
@@ -505,8 +510,8 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         private List<Bitmap> BitMap;
 
-        public MyAdapter(List<Bitmap> BitMap) {
-            this.BitMap = BitMap;
+        public MyAdapter(List<Bitmap> Bitmap) {
+            this.BitMap = Bitmap;
         }
 
         @Override
@@ -522,7 +527,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
-            viewHolder.imgView.setImageBitmap(images.get(position));
+            viewHolder.imgView.setImageBitmap(BitMap.get(position));
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
@@ -538,7 +543,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
 
         @Override
         public int getItemCount() {
-            return images.size();
+            return BitMap.size();
         }
     }
 }
