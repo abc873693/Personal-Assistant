@@ -208,7 +208,9 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         //View view = inflater.inflate(R.layout.fragment_schedules, container, false);
         context = fl.getContext();
         recyclerView = (RecyclerView) fl.findViewById(R.id.recycleview_picture);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
         Button btn_add = (Button) fl.findViewById(R.id.btn_add);
@@ -254,9 +256,6 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                 images.add(bitmap);
                 AddFragment.MyAdapter MyAdapter = new AddFragment.MyAdapter(images);
                 recyclerView.setAdapter(MyAdapter);
-                LinearLayoutManager llm = new LinearLayoutManager(context);
-                llm.setOrientation(LinearLayoutManager.VERTICAL);
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
             } catch (FileNotFoundException e) {
                 Log.e("Exception", e.getMessage(), e);
