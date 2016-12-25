@@ -49,9 +49,11 @@ import java.util.Calendar;
 import java.util.List;
 
 import rainvisitor.personal_assistant.DetailScheduleActivity;
+import rainvisitor.personal_assistant.MapsActivity;
 import rainvisitor.personal_assistant.R;
 
 import static android.app.Activity.RESULT_OK;
+import static rainvisitor.personal_assistant.libs.Utils.REQUEST_LOCATION;
 
 public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     // TODO: Rename parameter arguments, choose names that match
@@ -132,6 +134,13 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         fl = (FrameLayout) inflater.inflate(R.layout.fragment_detailschedule_add, container, false);
         editText_title = (EditText) fl.findViewById(R.id.edittext_title);
         textView_location = (TextView) fl.findViewById(R.id.textview_location);
+        textView_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), MapsActivity.class);
+                startActivityForResult(intent, REQUEST_LOCATION);
+            }
+        });
         textView_dateStart = (TextView) fl.findViewById(R.id.textview_startdate);
         textView_dateEnd = (TextView) fl.findViewById(R.id.textview_enddate);
         textView_timeStart = (TextView) fl.findViewById(R.id.textview_starttime);

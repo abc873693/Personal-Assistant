@@ -29,7 +29,10 @@
             android:padding="12dp"
             android:textColor="@color/black"/>
     </android.support.design.widget.AppBarLayout>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey_400"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,7 +59,10 @@
             android:textColor="@color/black"
             android:textColorHint="@color/black_dividers" />
     </LinearLayout>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey_400"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -86,6 +92,10 @@
             android:gravity="center"
             android:text="請選擇位置"/>
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey_400"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -136,6 +146,10 @@
                     android:gravity="center"
                     android:text="開始時間"/>
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_400"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
