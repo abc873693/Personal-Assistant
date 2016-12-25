@@ -106,4 +106,8 @@
     <string name="編輯">edit</string>
     <string name="edit">edit</string>
     <string name="title_activity_maps">Map</string>
+    <string name="action_voice_rec">action voice rec</string>
+    <string name="action_location">action location</string>
+    <string name="action_taxi">action taxi</string>
+    <string name="action_change_colors">change style</string>
 </resources>
