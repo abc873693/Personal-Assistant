@@ -11,7 +11,7 @@
         android:id="@+id/list_image"
         android:scaleType="fitCenter" />
 
-    <view
+    <View
         android:layout_width="1dp"
         android:layout_height="90dp"
         android:background="@color/grey_400"

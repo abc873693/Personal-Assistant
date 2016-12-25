@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "371690724241-7nia4jrv2116hqc6v7mlud1t6qr5k75m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "rainvisitor.personal_assistant",
+            "certificate_hash": "CCC238AD7AA58D20B6FC248685045701F73971DE"
+          }
+        },
+        {
+          "client_id": "371690724241-9gcjkder9ve5io66jdr2fc6pusu8js15.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "rainvisitor.personal_assistant",
+            "certificate_hash": "2C4290932F8CD233C227C2C9D46AB796A8F4EC21"
+          }
+        },
+        {
           "client_id": "371690724241-d4lfrhvf8ji6k60dolg8ei81sd8gbo31.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

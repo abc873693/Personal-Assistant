@@ -1,6 +1,7 @@
 package rainvisitor.personal_assistant.DetailScheduleFragmet;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,7 +25,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +36,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
@@ -49,6 +58,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final int Pick_Image_Request = 33;
     //Todo: New Items
     private FrameLayout fl;
     private EditText editText_title;
@@ -58,7 +68,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     //Todo: RecyclerView
     private RecyclerView recyclerView;
     private ArrayList<Bitmap> images = new ArrayList<>();
-
+    private ArrayList<Uri> uriArray = new ArrayList<>();
     private long count = 0;
     private LinearLayout linearLayout;
     private Calendar now, start, end, temp;
@@ -76,6 +86,11 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     private DetailScheduleActivity detailScheduleActivity;
 
     private OnFragmentInteractionListener mListener;
+
+
+    //FireBase Storage
+    private StorageReference mStorageRef;
+
 
     public AddFragment() {
         // Required empty public constructor
@@ -111,6 +126,9 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+
+
         fl = (FrameLayout) inflater.inflate(R.layout.fragment_detailschedule_add, container, false);
         editText_title = (EditText) fl.findViewById(R.id.edittext_title);
         textView_location = (TextView) fl.findViewById(R.id.textview_location);
@@ -203,10 +221,14 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         MyAdapter adapter = new MyAdapter(dataset);
         recyclerView.setAdapter(adapter);*/
-        View view = inflater.inflate(R.layout.fragment_schedules, container, false);
-        context = getActivity();
-        recyclerView = (RecyclerView) view.findViewById(R.id.listView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
+        //View view = inflater.inflate(R.layout.fragment_schedules, container, false);
+        context = fl.getContext();
+        recyclerView = (RecyclerView) fl.findViewById(R.id.recycleview_picture);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
 
         Button btn_add = (Button) fl.findViewById(R.id.btn_add);
@@ -214,6 +236,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
             @Override
             public void onClick(View view) {
                 addSchedule();
+                UploadImage();
             }
         });
         //Todo: 選取相片
@@ -223,7 +246,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_PICK, null);
                 intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                startActivityForResult(intent, 33);
+                startActivityForResult(intent, Pick_Image_Request);
             }
         });
         textview_newpicture.setOnClickListener(new View.OnClickListener() {
@@ -231,7 +254,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_PICK, null);
                 intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                startActivityForResult(intent, 33);
+                startActivityForResult(Intent.createChooser(intent, "Select an Image."), Pick_Image_Request);
             }
         });
 
@@ -243,8 +266,9 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
+        if (requestCode == Pick_Image_Request && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
+            uriArray.add(uri);
             Log.e("uri", uri.toString());
             ContentResolver cr = getActivity().getContentResolver();
             try {
@@ -252,11 +276,52 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                 images.add(bitmap);
                 AddFragment.MyAdapter MyAdapter = new AddFragment.MyAdapter(images);
                 recyclerView.setAdapter(MyAdapter);
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
             } catch (FileNotFoundException e) {
                 Log.e("Exception", e.getMessage(), e);
             }
         }
+    }
+
+    private void UploadImage(){
+    for(int i = 0;i < uriArray.size();i++) {
+        if (uriArray.get(i) != null) {
+
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+            final ProgressDialog progressDialog = new ProgressDialog(fl.getContext());
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+
+            StorageReference riversRef = mStorageRef.child(user.getUid() + "/event" + start.getTimeInMillis() + "Picture" + i);
+
+            riversRef.putFile(uriArray.get(i))
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+                            Toast.makeText(fl.getContext(), "Image Uploaded.", Toast.LENGTH_LONG);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Toast.makeText(fl.getContext(), exception.getMessage(), Toast.LENGTH_LONG);
+
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred());
+                            progressDialog.setMessage((int) (progress + 0.5) + "% Uploaded...");
+                        }
+                    })
+            ;
+        } else {
+            Toast.makeText(fl.getContext(), "Error Happened！", Toast.LENGTH_LONG);
+        }
+    }
     }
 
     @Override
@@ -438,12 +503,13 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                         Log.e("getCurrentUser", "uid = " + uid + "  name = " + name + "  email = " + email + "  photoUrl = " + photoUrl);
                     } else uid = "0";
 
+                    //Todo: Insert Data
                     String UID = detailScheduleActivity.current_activity_uid;
                     DatabaseReference mDatabase = dataSnapshot.child("activity").child(UID).child("activity_child").getRef();
-                    //DatabaseReference userDatabase = dataSnapshot.child("users").child(uid).getRef();
                     count = dataSnapshot.child("activity").child(UID).child("activity_child").getChildrenCount();
                     Log.e("count",count+"123");
                     DatabaseReference dr = mDatabase.child((count) + "").getRef();
+                    dr.child("creator").setValue(user.getDisplayName());
                     dr.child("title").setValue(editText_title.getText() + "");
                     dr.child("content").setValue("內容");
                     dr.child("time").child("begin").setValue(start.getTimeInMillis());
@@ -505,8 +571,8 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         private List<Bitmap> BitMap;
 
-        public MyAdapter(List<Bitmap> BitMap) {
-            this.BitMap = BitMap;
+        public MyAdapter(List<Bitmap> Bitmap) {
+            this.BitMap = Bitmap;
         }
 
         @Override
@@ -522,7 +588,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
-            viewHolder.imgView.setImageBitmap(images.get(position));
+            viewHolder.imgView.setImageBitmap(BitMap.get(position));
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
@@ -538,7 +604,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
 
         @Override
         public int getItemCount() {
-            return images.size();
+            return BitMap.size();
         }
     }
 }
