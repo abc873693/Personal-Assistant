@@ -68,7 +68,9 @@
             android:theme="@style/MyMaterialTheme.Base">
 
         </activity>
-        <activity android:name=".SettingActivity">
+        <activity android:name=".SettingActivity"
+            android:label="@string/action_settings"
+            android:theme="@style/MyMaterialTheme.Base">
 
         </activity>
         <!--
@@ -85,7 +87,8 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps">
+            android:label="@string/title_activity_maps"
+            android:theme="@style/MyMaterialTheme.Base">
 
         </activity>
     </application>
