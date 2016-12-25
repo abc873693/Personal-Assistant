@@ -2,6 +2,7 @@ package rainvisitor.personal_assistant;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -12,6 +13,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -19,8 +21,6 @@ import android.widget.TextView;
 import rainvisitor.personal_assistant.DetailScheduleFragmet.AddFragment;
 import rainvisitor.personal_assistant.DetailScheduleFragmet.ContentFragment;
 import rainvisitor.personal_assistant.DetailScheduleFragmet.MainFragment;
-
-import static android.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE;
 
 public class DetailScheduleActivity extends AppCompatActivity implements
         MainFragment.OnFragmentInteractionListener
@@ -30,6 +30,8 @@ public class DetailScheduleActivity extends AppCompatActivity implements
         main,
         add,
         content,
+        accountdetail,
+        discussdetail
     }
 
     public CollapsingToolbarLayout collapsingToolbar;
@@ -39,7 +41,9 @@ public class DetailScheduleActivity extends AppCompatActivity implements
     public NestedScrollView nestedScrollView;
     public AppBarLayout appBarLayout;
     public FRAGMENT CurrentFragment = FRAGMENT.main;
-    private String current_activity_uid;
+    public MenuItem menuItem_add,menuItem_share;
+    public String current_activity_uid;
+    public String current_schedule_uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,19 +68,30 @@ public class DetailScheduleActivity extends AppCompatActivity implements
         //you can leave it empty
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menuItem_add = menu.findItem(R.id.action_add);
+        menuItem_share = menu.findItem(R.id.action_share);
+        Log.d("toolbar menu", "initial");
+        return super.onCreateOptionsMenu(menu);
+    }
+
     private void initToolbar() {
         toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        // Inflate a menu to be displayed in the toolbar
+        toolbar.inflateMenu(R.menu.toolber_detail);
+        onCreateOptionsMenu(toolbar.getMenu());
         // Set an OnMenuItemClickListener to handle menu item clicks
         toolbar.setOnMenuItemClickListener(new android.support.v7.widget.Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_share:
-                        changeContent(FRAGMENT.content);
-                        /*Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                        String str_share = "安安你好";
+                        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
-                        sharingIntent.putExtra(Intent.EXTRA_TEXT, posts.get(position).link_URL);
-                        startActivity(Intent.createChooser(sharingIntent, "分享至"));*/
+                        sharingIntent.putExtra(Intent.EXTRA_TEXT, str_share);
+                        startActivity(Intent.createChooser(sharingIntent, "分享至"));
                         break;
                     case R.id.action_add:
                         changeContent(FRAGMENT.add);
@@ -87,8 +102,6 @@ public class DetailScheduleActivity extends AppCompatActivity implements
                 return true;
             }
         });
-        // Inflate a menu to be displayed in the toolbar
-        toolbar.inflateMenu(R.menu.toolber_detail);
         Log.d("toolbar", getTitle().toString());
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,12 +142,15 @@ public class DetailScheduleActivity extends AppCompatActivity implements
 
     public void changeContent(FRAGMENT position) {
         Fragment fragment = null;
+        FragmentTransaction fragTrans = getFragmentManager().beginTransaction();
         switch (position) {
             case main:
                 fragment = new MainFragment().newInstance(current_activity_uid);
                 toolbar.setNavigationIcon(null);
                 appBarLayout.setExpanded(true, true);
                 ViewCompat.setNestedScrollingEnabled(nestedScrollView, true);
+                menuItem_add.setVisible(true);
+                menuItem_share.setVisible(true);
                 break;
             case content:
                 fragment = new ContentFragment().newInstance();
@@ -145,41 +161,15 @@ public class DetailScheduleActivity extends AppCompatActivity implements
                 toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
                 appBarLayout.setExpanded(false, true);
                 ViewCompat.setNestedScrollingEnabled(nestedScrollView, false);
+                menuItem_add.setVisible(false);
+                menuItem_share.setVisible(false);
                 break;
             default:
 
                 break;
         }
         if (fragment != null) {
-            FragmentTransaction fragTrans = getFragmentManager().beginTransaction();
-            fragTrans.setTransition(TRANSIT_FRAGMENT_FADE);
-            fragTrans.replace(R.id.content_main, fragment);
-            fragTrans.commit();
-        }
-        CurrentFragment = position;
-    }
-
-    public void changeContent(FRAGMENT position, String param1) {
-        Fragment fragment = null;
-        switch (position) {
-            case main:
-                fragment = new MainFragment().newInstance(current_activity_uid);
-                toolbar.setNavigationIcon(null);
-                break;
-            case content:
-                fragment = new ContentFragment().newInstance(current_activity_uid, param1);
-                break;
-            case add:
-                fragment = new AddFragment().newInstance();
-                toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
-                break;
-            default:
-
-                break;
-        }
-        if (fragment != null) {
-            FragmentTransaction fragTrans = getFragmentManager().beginTransaction();
-            fragTrans.setTransition(TRANSIT_FRAGMENT_FADE);
+            fragTrans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             fragTrans.replace(R.id.content_main, fragment);
             fragTrans.commit();
         }

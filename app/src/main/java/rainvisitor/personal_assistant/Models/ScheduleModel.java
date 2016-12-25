@@ -7,8 +7,8 @@ package rainvisitor.personal_assistant.Models;
 public class ScheduleModel {
     public String uid;
     public String title;
-    public String date_begin;
-    public String date_end;
+    public long date_begin;
+    public long date_end;
     public String content;
     public String location;
 }

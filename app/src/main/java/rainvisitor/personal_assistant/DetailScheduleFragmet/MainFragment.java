@@ -27,6 +27,8 @@ import rainvisitor.personal_assistant.DetailScheduleActivity;
 import rainvisitor.personal_assistant.Models.ActivityModel;
 import rainvisitor.personal_assistant.R;
 
+import static rainvisitor.personal_assistant.Drawer.SchedulesFragment.getDate;
+
 public class MainFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
@@ -113,16 +115,15 @@ public class MainFragment extends Fragment {
                 Location = dataSnapshot.child(UID).child("location").child("name").getValue().toString();
                 detailScheduleActivity.collapsingToolbar.setTitle(Title);
                 detailScheduleActivity.textView_location.setText(Location);
-                for (DataSnapshot ds : dataSnapshot.child(UID).child("acitivty_child").getChildren()) {
+                for (DataSnapshot ds : dataSnapshot.child(UID).child("activity_child").getChildren()) {
                     ActivityModel model = new ActivityModel();
                     model.title = ds.child("title").getValue().toString();
-                    Log.e("time", ds.child("time").child("begin").getValue().toString() + "  " + ds.child("time").child("end").getValue().toString());
                     model.date_begin = Long.valueOf(ds.child("time").child("begin").getValue().toString());
                     model.date_end = Long.valueOf(ds.child("time").child("end").getValue().toString());
                     model.content = ds.child("content").getValue().toString();
                     model.uid = ds.getKey();
                     Log.e(DATABASE_TAG, "Value" + ds.getValue().toString());
-                    Log.e(DATABASE_TAG, model.uid + " title=" + model.title);
+                    Log.e(DATABASE_TAG, model.uid + " title=" + model.title   + " begin = " +model.date_begin + " end = " +model.date_end);
                     lists.add(model);
                 }
                 for (int i = 0; i < lists.size() - 1; i++) {
@@ -134,6 +135,9 @@ public class MainFragment extends Fragment {
                             lists.set(j, tmpA);
                         }
                     }
+                }
+                for (int i = 0; i < lists.size(); i++) {
+                    Log.w(DATABASE_TAG, "data = " + i + "  " + getDate(lists.get(i).date_begin, "yyyy年 MM月 dd日 hh點mm分"));
                 }
                 LinearLayoutManager llm = new LinearLayoutManager(context);
                 llm.setAutoMeasureEnabled(true);
@@ -154,11 +158,12 @@ public class MainFragment extends Fragment {
 
 
     public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
-        public Calendar Previous;
+        private Calendar Previous;
         private List<ActivityModel> contactList;
 
         private ContactAdapter(List<ActivityModel> contactList) {
             Previous = Calendar.getInstance();
+            Previous.setTimeInMillis(0);
             this.contactList = contactList;
         }
 
@@ -187,16 +192,17 @@ public class MainFragment extends Fragment {
             Log.e("day deffreince", "diff = " + diff + " day = " + day + "");
             String date;
             if (day > 0) {
-                date = begin.get(Calendar.YEAR) + "/" + (begin.get(Calendar.MONTH) + 1) + "/" + +begin.get(Calendar.DAY_OF_YEAR);
+                date = begin.get(Calendar.YEAR) + "/" + (begin.get(Calendar.MONTH) + 1) + "/" + +begin.get(Calendar.DAY_OF_MONTH);
             } else {
                 date = "";
                 holder.textView_date.setVisibility(View.GONE);
             }
             Previous = begin;
-            holder.textView_date.setText(date);
-            holder.textView_title.setText(lists.get(position).title);
             String tmp1 = ((begin.get(Calendar.HOUR_OF_DAY) < 10) ? "0" : "") + begin.get(Calendar.HOUR_OF_DAY);
             String tmp2 = ((begin.get(Calendar.MINUTE) < 10) ? "0" : "") + begin.get(Calendar.MINUTE);
+            Log.w("date", date +"   " + tmp1 + ":" + tmp2 + "");
+            holder.textView_date.setText(date);
+            holder.textView_title.setText(lists.get(position).title);
             holder.textView_time.setText(tmp1 + ":" + tmp2);
             holder.textView_content.setText(lists.get(position).content);
             holder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
@@ -236,8 +242,6 @@ public class MainFragment extends Fragment {
                     //when user's hand released.
                 }
             });
-            Log.e("holder", holder.textView_title.getText().toString());
-            //holder.swipeLayout.setVisibility(View.INVISIBLE);
             holder.textView_see.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -248,7 +252,8 @@ public class MainFragment extends Fragment {
                     }
                     int itemPosition = recyclerView.getChildLayoutPosition(view);
                     DetailScheduleActivity detailScheduleActivity = (DetailScheduleActivity) getActivity();
-                    detailScheduleActivity.changeContent(DetailScheduleActivity.FRAGMENT.content, lists.get(itemPosition).uid);
+                    detailScheduleActivity.current_schedule_uid = lists.get(itemPosition).uid;
+                    detailScheduleActivity.changeContent(DetailScheduleActivity.FRAGMENT.content);
                 }
             });
             holder.textView_edit.setOnClickListener(new View.OnClickListener() {

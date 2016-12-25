@@ -9,88 +9,95 @@
     <!-- TODO: Update blank fragment layout -->
 
     <LinearLayout
+        android:id="@+id/linealayout_detailadd"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/grey_100"
         android:orientation="vertical"
         android:weightSum="1">
 
-
-
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="1dp"
             android:background="@color/grey_100"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingBottom="1dp">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/grey_100"
+                android:padding="5dp"
+                android:src="@drawable/ic_assignment_black" />
 
             <EditText
+                android:id="@+id/edittext_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_title"
-                android:id="@+id/edittext_content"
-                android:gravity="top"
-                android:textSize="24sp"
-                android:padding="12dp"
                 android:background="@color/grey_100"
+                android:gravity="top"
+                android:hint="@string/hint_title"
+                android:padding="12dp"
                 android:textColor="@color/black"
-                android:textColorHint="@color/black_dividers" />
+                android:textColorHint="@color/black_dividers"
+                android:textSize="24sp" />
         </LinearLayout>
-        <view
+
+        <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/black" />
+            android:background="@color/grey_400" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.35"
-            android:paddingBottom="1dp"
             android:background="@color/grey_100"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingBottom="1dp">
 
             <ImageView
+                android:id="@+id/imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@color/grey_100"
                 android:padding="5dp"
-                android:src="@drawable/ic_place_black_24dp"
-                android:id="@+id/imageView" />
+                android:src="@drawable/ic_place_black_24dp" />
 
             <TextView
+                android:id="@+id/textview_location"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/hint_location"
-                android:id="@+id/textview_location"
-                android:textSize="24sp"
-                android:padding="12dp"
                 android:background="@color/grey_100"
+                android:gravity="center"
+                android:hint="@string/hint_location"
+                android:padding="12dp"
+                android:text="地址"
                 android:textColor="@color/black"
-                android:textColorHint="@color/black_dividers"/>
+                android:textColorHint="@color/black_dividers"
+                android:textSize="24sp" />
 
         </LinearLayout>
 
-        <view
+        <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/black" />
+            android:background="@color/grey_400" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="1dp"
             android:background="@color/grey_100"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingBottom="1dp">
 
             <ImageView
+                android:id="@+id/imageView2"
                 android:layout_width="wrap_content"
                 android:layout_height="107dp"
                 android:background="@color/grey_100"
                 android:padding="5dp"
-                android:src="@drawable/ic_timer_black_24dp"
-                android:id="@+id/imageView2" />
+                android:src="@drawable/ic_timer_black_24dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -104,27 +111,27 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/textview_startdate"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:textSize="24sp"
-                        android:padding="12dp"
                         android:background="@color/grey_100"
+                        android:padding="12dp"
                         android:textColor="@color/black"
                         android:textColorHint="@color/black_dividers"
-                        android:id="@+id/textview_startdate" />
+                        android:textSize="24sp" />
 
                     <TextView
+                        android:id="@+id/textview_starttime"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="2"
-                        android:id="@+id/textview_starttime"
-                        android:hint="@string/hint_time"
-                        android:textSize="24sp"
-                        android:padding="12dp"
                         android:background="@color/grey_100"
+                        android:hint="@string/hint_time"
+                        android:padding="12dp"
                         android:textColor="@color/black"
-                        android:textColorHint="@color/black_dividers"/>
+                        android:textColorHint="@color/black_dividers"
+                        android:textSize="24sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -133,42 +140,42 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/textview_enddate"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:textSize="24sp"
-                        android:padding="12dp"
                         android:background="@color/grey_100"
+                        android:padding="12dp"
                         android:textColor="@color/black"
                         android:textColorHint="@color/black_dividers"
-                        android:id="@+id/textview_enddate" />
+                        android:textSize="24sp" />
 
                     <TextView
+                        android:id="@+id/textview_endtime"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="2"
-                        android:hint="@string/hint_time"
-                        android:textSize="24sp"
-                        android:padding="12dp"
                         android:background="@color/grey_100"
+                        android:hint="@string/hint_time"
+                        android:padding="12dp"
                         android:textColor="@color/black"
                         android:textColorHint="@color/black_dividers"
-                        android:id="@+id/textview_endtime"/>
+                        android:textSize="24sp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"></LinearLayout>
-        <view
+
+        <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/black" />
+            android:background="@color/grey_400" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -176,39 +183,37 @@
             android:weightSum="1">
 
             <ImageView
+                android:id="@+id/imageView_addpicture"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                app:srcCompat="@drawable/ic_add_black"
-                android:id="@+id/imageView_addpicture" />
+                app:srcCompat="@drawable/ic_add_black" />
 
             <TextView
+                android:id="@+id/textView_newpicture"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="新增照片"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                android:textAlignment="viewStart"
                 android:paddingTop="6dp"
-                android:id="@+id/textView_newpicture"
-                android:textColor="@color/black"
-                />
+                android:text="新增照片"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                android:textColor="@color/black" />
         </LinearLayout>
-        <view
+
+        <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/grey_100" />
+
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycleview_picture"
             android:layout_width="match_parent"
             android:layout_height="98dp"
-            android:scrollbars="horizontal"
-            android:id="@+id/recycleview_picture"
-            />
-
-        <Button
-            android:text="Add"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_add" />
+            android:scrollbars="horizontal" />
     </LinearLayout>
-
-
+    <Button
+        android:id="@+id/btn_add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:text="@string/add" />
 </FrameLayout>

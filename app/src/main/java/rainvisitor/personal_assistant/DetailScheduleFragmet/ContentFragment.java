@@ -21,6 +21,8 @@ import java.util.Date;
 import rainvisitor.personal_assistant.DetailScheduleActivity;
 import rainvisitor.personal_assistant.R;
 
+import static rainvisitor.personal_assistant.Drawer.SchedulesFragment.getDate;
+
 public class ContentFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -55,6 +57,8 @@ public class ContentFragment extends Fragment {
     public ContentFragment newInstance() {
         ContentFragment fragment = new ContentFragment();
         Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, "");
+        args.putString(ARG_PARAM2, "");
         fragment.setArguments(args);
         return fragment;
     }
@@ -88,7 +92,9 @@ public class ContentFragment extends Fragment {
                 Log.e("mParam1", ds.child("content").getValue() + "");
                 detailScheduleActivity.collapsingToolbar.setTitle(title);
                 textView_content.setText(content);
-                textView_time.setText(ds.child("time").child("begin").getValue() + "\n到\n" + ds.child("time").child("end").getValue());
+                String begin = getDate(Long.parseLong(ds.child("time").child("begin").getValue().toString()), "yyyy年 MM月 dd日 hh點mm分");
+                String end = getDate(Long.parseLong(ds.child("time").child("end").getValue().toString()), "yyyy年 MM月 dd日 hh點mm分");
+                textView_time.setText(begin + "\n到\n" + end);
                 textView_creator.setText(creator);
                 Log.d("Content", "title = " + title + " creator = "+ creator + " content = " + content);
             }

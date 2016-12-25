@@ -175,8 +175,8 @@ public class SchedulesFragment extends Fragment {
                     ScheduleModel model = new ScheduleModel();
                     DataSnapshot ds = dataSnapshot.child(uid);
                     model.title = ds.child("title").getValue().toString();
-                    model.date_begin = getDate(Long.parseLong(ds.child("time").child("begin").getValue().toString()), "yyyy年 MM月 dd日 hh點mm分");
-                    model.date_end = getDate(Long.parseLong(ds.child("time").child("end").getValue().toString().toString()), "yyyy年 MM月 dd日 hh點mm分");
+                    model.date_begin = Long.parseLong(ds.child("time").child("begin").getValue().toString());
+                    model.date_end = Long.parseLong(ds.child("time").child("end").getValue().toString());
                     model.content = ds.child("content").getValue().toString();
                     model.location = ds.child("location").child("name").getValue().toString();
                     model.uid = uid;
@@ -225,8 +225,10 @@ public class SchedulesFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ContactViewHolder holder, final int position) {
+            String begin = getDate(lists.get(position).date_begin, "yyyy年 MM月 dd日 hh點mm分");
+            String end = getDate(lists.get(position).date_end, "yyyy年 MM月 dd日 hh點mm分");
             holder.textView_title.setText(lists.get(position).title);
-            holder.textView_time.setText(lists.get(position).date_begin + " ~ " + lists.get(position).date_end + " At " + lists.get(position).location);
+            holder.textView_time.setText(begin + " ~ " + end + " At " + lists.get(position).location);
             holder.textView_content.setText(lists.get(position).content);
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override

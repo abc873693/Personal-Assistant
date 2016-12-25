@@ -1,13 +1,17 @@
 package rainvisitor.personal_assistant.DetailScheduleFragmet;
 
 import android.app.Fragment;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,39 +34,44 @@ import com.google.firebase.database.ValueEventListener;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import rainvisitor.personal_assistant.DetailScheduleActivity;
 import rainvisitor.personal_assistant.R;
 
-public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetListener,TimePickerDialog.OnTimeSetListener {
+import static android.app.Activity.RESULT_OK;
+
+public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     //Todo: New Items
+    private FrameLayout fl;
     private EditText editText_title;
     private TextView textView_location, textView_dateStart, textView_dateEnd, textView_timeStart, textView_timeEnd;
     private ImageView imageView_addPicture;
 
     //Todo: RecyclerView
-    private ArrayList<Image> images = new ArrayList<>();
     private RecyclerView recyclerView;
+    private ArrayList<Bitmap> images = new ArrayList<>();
 
     private long count = 0;
     private LinearLayout linearLayout;
-    private Calendar now;
+    private Calendar now, start, end, temp;
     private int current_date = 0, current_time = 0;
 
-    private String sdatestring,edatestring,stimestring,etimestring;
+    private String sdatestring, edatestring, stimestring, etimestring;
     private long stimestamp, etimestamp;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private Context context;
 
     private DetailScheduleActivity detailScheduleActivity;
 
@@ -102,39 +111,43 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        FrameLayout fl = (FrameLayout) inflater.inflate(R.layout.fragment_detailschedule_add, container, false);
+        fl = (FrameLayout) inflater.inflate(R.layout.fragment_detailschedule_add, container, false);
         editText_title = (EditText) fl.findViewById(R.id.edittext_title);
         textView_location = (TextView) fl.findViewById(R.id.textview_location);
         textView_dateStart = (TextView) fl.findViewById(R.id.textview_startdate);
         textView_dateEnd = (TextView) fl.findViewById(R.id.textview_enddate);
         textView_timeStart = (TextView) fl.findViewById(R.id.textview_starttime);
         textView_timeEnd = (TextView) fl.findViewById(R.id.textview_endtime);
+        linearLayout = (LinearLayout) fl.findViewById(R.id.linealayout_detailadd);
         TextView textview_newpicture = (TextView) fl.findViewById(R.id.textView_newpicture);
         detailScheduleActivity = (DetailScheduleActivity) getActivity();
-
+        detailScheduleActivity.collapsingToolbar.setTitle("新增行程");
         now = Calendar.getInstance();
-        String date = now.get(Calendar.YEAR) + "年" + now.get(Calendar.MONTH) + "月" + now.get(Calendar.DAY_OF_MONTH) + "日";
-        String timeS = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
-        String timeE = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
-
-        sdatestring = edatestring = now.get(Calendar.YEAR) + "/" + now.get(Calendar.MONTH) + "/" + now.get(Calendar.DAY_OF_MONTH);
-        stimestring = etimestring = now.get(Calendar.HOUR_OF_DAY) + ":" + now.get(Calendar.MINUTE);
+        String date = now.get(Calendar.YEAR) + "年" + (now.get(Calendar.MONTH) + 1) + "月" + now.get(Calendar.DAY_OF_MONTH) + "日";
+        String timeS = now.get(Calendar.HOUR_OF_DAY) < 10 ? "0" : "";
+        timeS += now.get(Calendar.HOUR_OF_DAY) + ":";
+        timeS += now.get(Calendar.MINUTE) < 10 ? "0" : "";
+        timeS += now.get(Calendar.MINUTE);
+        String timeE = timeS;
 
         textView_dateStart.setText(date);
         textView_dateEnd.setText(date);
         textView_timeStart.setText(timeS);
         textView_timeEnd.setText(timeE);
 
-
+        start = Calendar.getInstance();
+        end = Calendar.getInstance();
+        temp = Calendar.getInstance();
+        start.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH), now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
+        end.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH), now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
         textView_dateStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                now = Calendar.getInstance();
                 DatePickerDialog dpd = DatePickerDialog.newInstance(
                         AddFragment.this,
-                        now.get(Calendar.YEAR),
-                        now.get(Calendar.MONTH),
-                        now.get(Calendar.DAY_OF_MONTH)
+                        start.get(Calendar.YEAR),
+                        start.get(Calendar.MONTH),
+                        start.get(Calendar.DATE)
                 );
                 current_date = 1;
                 dpd.show(getFragmentManager(), "Datepickerdialog");
@@ -143,32 +156,24 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         textView_dateEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                now = Calendar.getInstance();
                 DatePickerDialog dpd = DatePickerDialog.newInstance(
                         AddFragment.this,
-                        now.get(Calendar.YEAR),
-                        now.get(Calendar.MONTH),
-                        now.get(Calendar.DAY_OF_MONTH)
+                        end.get(Calendar.YEAR),
+                        end.get(Calendar.MONTH),
+                        end.get(Calendar.DATE)
                 );
                 current_date = 2;
                 dpd.show(getFragmentManager(), "Datepickerdialog");
             }
         });
-        Button btn_add = (Button) fl.findViewById(R.id.btn_add);
-        /*btn_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addSchedule();
-            }
-        });*/
+
         textView_timeStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                now = Calendar.getInstance();
                 TimePickerDialog tpd = TimePickerDialog.newInstance(
                         AddFragment.this,
-                        now.get(Calendar.HOUR_OF_DAY),
-                        now.get(Calendar.MINUTE),
+                        start.get(Calendar.HOUR_OF_DAY),
+                        start.get(Calendar.MINUTE),
                         false);
                 current_time = 1;
                 tpd.show(getFragmentManager(), "Timepickerdialog");
@@ -177,11 +182,10 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         textView_timeEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                now = Calendar.getInstance();
                 TimePickerDialog tpd = TimePickerDialog.newInstance(
                         AddFragment.this,
-                        now.get(Calendar.HOUR_OF_DAY),
-                        now.get(Calendar.MINUTE),
+                        end.get(Calendar.HOUR_OF_DAY),
+                        end.get(Calendar.MINUTE),
                         false);
                 current_time = 2;
                 tpd.show(getFragmentManager(), "Timepickerdialog");
@@ -192,19 +196,26 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
 
         /*//Todo: RecycleView
         recyclerView = (RecyclerView) fl.findViewById(R.id.recycleview_picture);
-        // 创建一个线性布局管理器
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        // 设置布局管理器
         recyclerView.setLayoutManager(layoutManager);
-        // 创建数据集
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        // 创建Adapter，并指定数据集
         MyAdapter adapter = new MyAdapter(dataset);
-        // 设置Adapter
         recyclerView.setAdapter(adapter);*/
+        View view = inflater.inflate(R.layout.fragment_schedules, container, false);
+        context = getActivity();
+        recyclerView = (RecyclerView) view.findViewById(R.id.listView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
 
+        Button btn_add = (Button) fl.findViewById(R.id.btn_add);
+        btn_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addSchedule();
+            }
+        });
         //Todo: 選取相片
         imageView_addPicture = (ImageView) fl.findViewById(R.id.imageView_addpicture);
         imageView_addPicture.setOnClickListener(new View.OnClickListener() {
@@ -228,45 +239,88 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     }
 
 
-
-
     //TODO: 回傳相片
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        if (resultCode == RESULT_OK) {
+            Uri uri = data.getData();
+            Log.e("uri", uri.toString());
+            ContentResolver cr = getActivity().getContentResolver();
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+                images.add(bitmap);
+                AddFragment.MyAdapter MyAdapter = new AddFragment.MyAdapter(images);
+                recyclerView.setAdapter(MyAdapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            } catch (FileNotFoundException e) {
+                Log.e("Exception", e.getMessage(), e);
+            }
+        }
     }
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String date = year + "年" + (++monthOfYear) + "月" + (dayOfMonth) + "日";
-        Log.e("onDateSet",view.toString());
-        switch (current_date){
+        temp = Calendar.getInstance();
+        String date = year + "年" + (monthOfYear + 1) + "月" + dayOfMonth + "日";
+        switch (current_date) {
             case 1:
+                temp.set(year, monthOfYear, dayOfMonth, start.get(Calendar.HOUR_OF_DAY), start.get(Calendar.MINUTE));
+                Log.e("Date parse", year + "年" + (monthOfYear + 1) + "月" + dayOfMonth + "日" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE));
+                Log.e("End", end.getTimeInMillis() + "");
+                Log.e("Temp", temp.getTimeInMillis() + "");
+                if (temp.getTimeInMillis() - end.getTimeInMillis() > 60000) {
+                    current_date = 1;
+                    checkdate();
+                    return;
+                }
+                start = temp;
                 textView_dateStart.setText(date);
-                sdatestring = year + "/" + (++monthOfYear) + "/" + (dayOfMonth);
                 break;
             case 2:
+                temp.set(year, monthOfYear, dayOfMonth, end.get(Calendar.HOUR_OF_DAY), end.get(Calendar.MINUTE));
+                Log.e("Date parse", year + "年" + (monthOfYear + 1) + "月" + dayOfMonth + "日" + start.get(Calendar.HOUR_OF_DAY) + ":" + start.get(Calendar.MINUTE));
+                Log.e("Start", start.getTimeInMillis() + "");
+                Log.e("Temp", temp.getTimeInMillis() + "");
+                if (start.getTimeInMillis() - temp.getTimeInMillis() > 60000) {
+                    current_date = 2;
+                    checkdate();
+                    return;
+                }
+                end = temp;
                 textView_dateEnd.setText(date);
-                edatestring = year + "/" + (++monthOfYear) + "/" + (dayOfMonth);
                 break;
             default:
                 break;
         }
     }
+
     @Override
     public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-        String hourString = hourOfDay < 10 ? "0"+hourOfDay : ""+hourOfDay;
-        String minuteString = minute < 10 ? "0"+minute : ""+minute;
-        String time = hourString+":"+minuteString;
-        switch (current_time){
+        temp = Calendar.getInstance();
+        String hourString = hourOfDay < 10 ? "0" + hourOfDay : "" + hourOfDay;
+        String minuteString = minute < 10 ? "0" + minute : "" + minute;
+        String time = hourString + ":" + minuteString;
+        switch (current_time) {
             case 1:
+                temp.set(start.get(Calendar.YEAR), start.get(Calendar.MONTH), start.get(Calendar.DATE), hourOfDay, minute);
+                if (temp.getTimeInMillis() - end.getTimeInMillis() > 60000) {
+                    current_time = 1;
+                    checktime();
+                    return;
+                }
+                start = temp;
                 textView_timeStart.setText(time);
-                stimestring = time;
                 break;
             case 2:
+                temp.set(end.get(Calendar.YEAR), end.get(Calendar.MONTH), end.get(Calendar.DATE), hourOfDay, minute);
+                if (start.getTimeInMillis() - temp.getTimeInMillis() > 60000) {
+                    current_time = 2;
+                    checktime();
+                    return;
+                }
+                end = temp;
                 textView_timeEnd.setText(time);
-                etimestring = time;
                 break;
             default:
                 break;
@@ -280,11 +334,65 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         }
     }
 
+    private void checkdate() {
+        final Snackbar snackbar = Snackbar
+                .make(linearLayout, "結束時間必須大於開始時間", Snackbar.LENGTH_INDEFINITE)
+                .setAction("確定", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (current_date == 1) {
+                            DatePickerDialog dpd = DatePickerDialog.newInstance(
+                                    AddFragment.this,
+                                    start.get(Calendar.YEAR),
+                                    start.get(Calendar.MONTH),
+                                    start.get(Calendar.DATE)
+                            );
+                            dpd.show(getFragmentManager(), "Datepickerdialog");
+                        } else {
+                            DatePickerDialog dpd = DatePickerDialog.newInstance(
+                                    AddFragment.this,
+                                    end.get(Calendar.YEAR),
+                                    end.get(Calendar.MONTH),
+                                    end.get(Calendar.DATE)
+                            );
+                            dpd.show(getFragmentManager(), "Datepickerdialog");
+                        }
+                    }
+                });
+        snackbar.getView().setBackgroundColor(Color.rgb(239, 83, 80));
+        snackbar.show();
+    }
 
+    private void checktime() {
+        final Snackbar snackbar = Snackbar
+                .make(linearLayout, "結束時間必須大於開始時間", Snackbar.LENGTH_INDEFINITE)
+                .setAction("確定", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (current_time == 1) {
+                            TimePickerDialog tpd = TimePickerDialog.newInstance(
+                                    AddFragment.this,
+                                    start.get(Calendar.HOUR_OF_DAY),
+                                    start.get(Calendar.MINUTE),
+                                    false);
+                            tpd.show(getFragmentManager(), "Timepickerdialog");
+                        } else {
+                            TimePickerDialog tpd = TimePickerDialog.newInstance(
+                                    AddFragment.this,
+                                    end.get(Calendar.HOUR_OF_DAY),
+                                    end.get(Calendar.MINUTE),
+                                    false);
+                            tpd.show(getFragmentManager(), "Timepickerdialog");
+                        }
+                    }
+                });
+        snackbar.getView().setBackgroundColor(Color.rgb(239, 83, 80));
+        snackbar.show();
+    }
+
+    //Todo: 有問題
     private void addSchedule() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference();
-
+/*
         SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm");
         Calendar startdtoc = Calendar.getInstance();
         try{
@@ -295,17 +403,16 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         }catch(ParseException e){
             e.printStackTrace();
         }
+*/
 
-
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    if (snap.getKey() == "activity") count = snap.getChildrenCount();
-                    Log.e("count", count + "");
-                }
-                if (textView_location.getText() + "" == "" || editText_title.getText() + "" == "" ||
-                        textView_dateStart.getText() + "" == "" || textView_timeStart.getText() + "" == "" || textView_dateEnd.getText() + "" == "" || textView_timeEnd.getText() + "" == "") {
+                if (textView_location.getText().toString().equals("") || editText_title.getText().toString().equals("") ||
+                        textView_dateStart.getText().toString().equals("") || textView_timeStart.getText().toString().equals("") ||
+                        textView_dateEnd.getText().toString().equals("") || textView_timeEnd.getText().toString().equals("")) {
 
                     final Snackbar snackbar = Snackbar
                             .make(linearLayout, "請勿留空", Snackbar.LENGTH_INDEFINITE)
@@ -316,19 +423,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                                 }
                             });
                     snackbar.show();
-                }
-                else if(stimestamp > etimestamp) {
-                    Snackbar snackbar = Snackbar
-                            .make(linearLayout, "開始時間不得大於結束時間！", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("確定", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-
-                                }
-                            });
-                    snackbar.show();
-
-                }else{
+                } else {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     String uid;
                     if (user != null) {
@@ -342,19 +437,20 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                         uid = user.getUid();
                         Log.e("getCurrentUser", "uid = " + uid + "  name = " + name + "  email = " + email + "  photoUrl = " + photoUrl);
                     } else uid = "0";
-                    DatabaseReference mDatabase = dataSnapshot.child("activity").getRef();
-                    DatabaseReference userDatabase = dataSnapshot.child("users").child(uid).getRef();
-                    count = dataSnapshot.child("activity").getChildrenCount();
-                    DatabaseReference dr = mDatabase.child((count + 1) + "").getRef();
-                    dr.child("location").setValue(textView_location.getText() + "");
+
+                    String UID = detailScheduleActivity.current_activity_uid;
+                    DatabaseReference mDatabase = dataSnapshot.child("activity").child(UID).child("activity_child").getRef();
+                    //DatabaseReference userDatabase = dataSnapshot.child("users").child(uid).getRef();
+                    count = dataSnapshot.child("activity").child(UID).child("activity_child").getChildrenCount();
+                    Log.e("count",count+"123");
+                    DatabaseReference dr = mDatabase.child((count) + "").getRef();
                     dr.child("title").setValue(editText_title.getText() + "");
-                    dr.child("time").child("begin").setValue(stimestamp);
-                    dr.child("time").child("end").setValue(etimestamp);
-                    dr.child("members").child("0").child("authority").setValue("creator");
-                    dr.child("members").child("0").child("uid").setValue(uid);
-                    long count_activity = dataSnapshot.child("users").child(uid).child("activtys").getChildrenCount();
-                    Log.e("count_activity", "count_activity" + count_activity);
-                    userDatabase.child("activtys").child((count_activity + 1) + "").child("uid").setValue((count + 1) + "");
+                    dr.child("content").setValue("內容");
+                    dr.child("time").child("begin").setValue(start.getTimeInMillis());
+                    dr.child("time").child("end").setValue(end.getTimeInMillis());
+                    /*long count_activity = dataSnapshot.child("users").child(uid).child("activtys").getChildrenCount();
+                    userDatabase.child("activtys").child((count_activity + 1) + "").child("uid").setValue((count + 1) + "");*/
+                    detailScheduleActivity.changeContent(DetailScheduleActivity.FRAGMENT.main);
                 }
             }
 
@@ -387,7 +483,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     public void onResume() {
         super.onResume();
         DatePickerDialog dpd = (DatePickerDialog) getFragmentManager().findFragmentByTag("Datepickerdialog");
-        if(dpd != null) dpd.setOnDateSetListener(this);
+        if (dpd != null) dpd.setOnDateSetListener(this);
     }
 
     /**
@@ -403,5 +499,46 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+        private List<Bitmap> BitMap;
+
+        public MyAdapter(List<Bitmap> BitMap) {
+            this.BitMap = BitMap;
+        }
+
+        @Override
+        public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+                                                       int viewType) {
+            View itemLayoutView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.list_image, null);
+
+            ViewHolder viewHolder = new ViewHolder(itemLayoutView);
+            return viewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder viewHolder, int position) {
+
+            viewHolder.imgView.setImageBitmap(images.get(position));
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+
+            public ImageView imgView;
+
+            public ViewHolder(View itemLayoutView) {
+                super(itemLayoutView);
+                imgView = (ImageView) itemLayoutView.findViewById(R.id.list_image);
+            }
+        }
+
+
+        @Override
+        public int getItemCount() {
+            return images.size();
+        }
     }
 }
