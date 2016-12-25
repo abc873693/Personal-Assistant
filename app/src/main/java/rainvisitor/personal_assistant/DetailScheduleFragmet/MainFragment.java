@@ -69,6 +69,7 @@ public class MainFragment extends Fragment {
         detailScheduleActivity = (DetailScheduleActivity) getActivity();
         recyclerView = (RecyclerView) view.findViewById(R.id.listview);
         recyclerView.setNestedScrollingEnabled(false);
+        lists.clear();
         getActivityeData();
         return view;
     }
@@ -136,7 +137,6 @@ public class MainFragment extends Fragment {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        lists.add(model);
                     }
                 }
                 for (int i = 0; i < lists.size() - 1; i++) {

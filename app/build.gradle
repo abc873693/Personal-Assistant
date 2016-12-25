@@ -48,6 +48,7 @@ dependencies {
     compile 'com.wdullaer:materialdatetimepicker:3.0.0'
     compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.lapism:searchview:4.0'
+    compile 'com.github.arimorty:floatingsearchview:2.0.3'
     testCompile 'junit:junit:4.12'
 }
 
