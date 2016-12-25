@@ -46,8 +46,11 @@ dependencies {
     compile 'com.daimajia.swipelayout:library:1.2.0@aar'
     compile 'com.google.firebase:firebase-storage:10.0.1'
     compile 'com.wdullaer:materialdatetimepicker:3.0.0'
+    compile 'com.google.android.gms:play-services:10.0.1'
+    compile 'com.lapism:searchview:4.0'
     testCompile 'junit:junit:4.12'
 }
+
 
 
 

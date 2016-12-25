@@ -254,8 +254,7 @@ public class MainActivity extends AppCompatActivity
                 FirebaseAuth.getInstance().signOut();
                 SP_Service sp_service = new SP_Service(MainActivity.this);
                 sp_service.ClearUserData();
-                startActivity(new Intent().setClass(MainActivity.this, StartActivity.class));
-                finish();
+                startActivity(new Intent().setClass(MainActivity.this, MapsActivity.class));
                 break;
             default:
 
