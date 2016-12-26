@@ -96,6 +96,8 @@
                 android:src="@drawable/ic_local_atm_black_24dp" />
 
             <EditText
+                android:inputType="numberDecimal"
+                android:digits="1234567890"
                 android:id="@+id/edittext_cost"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -528,6 +528,18 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                     count = dataSnapshot.child("activity").child(UID).child("activity_child").getChildrenCount();
                     Log.e("count", count + "123");
                     DatabaseReference dr = mDatabase.child((count) + "").getRef();
+                    if(textView_location.getText().equals("請選擇位置")){
+                        dr.child("location").child("name").setValue("沒有位置");
+                        dr.child("location").child("Longitude").setValue(0);
+                        dr.child("location").child("Latitude").setValue(0);
+                        dr.child("location").child("enabled").setValue(false);
+                    }
+                    else {
+                        dr.child("location").child("name").setValue(textView_location.getText());
+                        dr.child("location").child("Longitude").setValue(latLng.longitude);
+                        dr.child("location").child("Latitude").setValue(latLng.latitude);
+                        dr.child("location").child("enabled").setValue(true);
+                    }
                     dr.child("creator").setValue(user.getDisplayName());
                     dr.child("title").setValue(editText_title.getText() + "");
                     dr.child("cost").setValue(editText_cost.getText() + "");

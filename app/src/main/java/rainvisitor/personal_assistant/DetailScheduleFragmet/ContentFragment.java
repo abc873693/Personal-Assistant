@@ -50,7 +50,7 @@ public class ContentFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private DetailScheduleActivity detailScheduleActivity;
-    private String content = "", creator = "", title = "", cost = "";
+    private String content = "", creator = "", title = "", cost = "", location = "";
     Date date_begin, date_end;
 
     // TODO: Rename and change types of parameters
@@ -70,7 +70,7 @@ public class ContentFragment extends Fragment {
     private String imagetime;
 
     private View line7;
-    private TextView textView_creator, textView_time, textView_content, textView_cost, textView_picture;
+    private TextView textView_creator, textView_time, textView_content, textView_cost, textView_picture, textView_location;
 
     public ContentFragment() {
         // Required empty public constructor
@@ -117,6 +117,7 @@ public class ContentFragment extends Fragment {
         textView_time = (TextView) fl.findViewById(R.id.textview_time);
         textView_cost = (TextView) fl.findViewById(R.id.textview_cost);
         textView_picture = (TextView) fl.findViewById(R.id.textview_picture);
+        textView_location = (TextView) fl.findViewById(R.id.textview_location);
         line7 = (View) fl.findViewById(R.id.line7);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
@@ -139,6 +140,7 @@ public class ContentFragment extends Fragment {
                 title = ds.child("title").getValue().toString();
                 imagecount = Integer.parseInt(ds.child("imagecount").getValue().toString());
                 imagetime = ds.child("time").child("begin").getValue().toString();
+                location = ds.child("location").child("name").getValue().toString();
                 if (imagecount == 0) {
                     textView_picture.setVisibility(View.GONE);
                     line7.setVisibility(View.GONE);
@@ -149,6 +151,7 @@ public class ContentFragment extends Fragment {
                 detailScheduleActivity.collapsingToolbar.setTitle(title);
                 textView_content.setText(content);
                 textView_cost.setText("$ " + cost);
+                textView_location.setText("At: " + location);
                 String begin = getDate(Long.parseLong(ds.child("time").child("begin").getValue().toString()), "yyyy年 MM月 dd日 hh點mm分");
                 String end = getDate(Long.parseLong(ds.child("time").child("end").getValue().toString()), "yyyy年 MM月 dd日 hh點mm分");
                 textView_time.setText(begin + "\n到\n" + end);
