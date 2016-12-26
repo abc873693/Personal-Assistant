@@ -32,6 +32,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import rainvisitor.personal_assistant.DetailScheduleFragmet.AddFragment;
 import rainvisitor.personal_assistant.DetailScheduleFragmet.ContentFragment;
@@ -70,6 +78,11 @@ public class DetailScheduleActivity extends AppCompatActivity implements
     private GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
 
+    private StorageReference mStorageRef;
+
+    private LatLng latlng;
+
+
     @Override
     public void onConnectionSuspended(int i) {
 
@@ -83,6 +96,26 @@ public class DetailScheduleActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                DataSnapshot ds = dataSnapshot.child("activity").child(current_activity_uid);
+                Double Lat = Double.parseDouble(ds.child("location").child("Latitude").getValue().toString());
+                Double Lng = Double.parseDouble(ds.child("location").child("Longitude").getValue().toString());
+                latlng = new LatLng(Lat, Lng);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         setContentView(R.layout.activity_detail_schedule);
         if (getIntent().getExtras() != null) {
             current_activity_uid = getIntent().getExtras().getString("activity_uid");
@@ -97,6 +130,8 @@ public class DetailScheduleActivity extends AppCompatActivity implements
         initToolbar();
         changeContent(FRAGMENT.main);
         setUpGoogleApiClient();
+
+
     }
 
     @Override
@@ -183,11 +218,13 @@ public class DetailScheduleActivity extends AppCompatActivity implements
                     /*mLocationRequest = LocationRequest.create();
                     mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
                     mLocationRequest.setInterval(1000);*/
+
+
                     FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, DetailScheduleActivity.this);
                     Location location = FusedLocationApi.getLastLocation(mGoogleApiClient);
+
                     mLocation = location;
-                    eLocation = mLocation;
-                    Utils.startNavigationActivity(DetailScheduleActivity.this, mLocation.getLatitude(), mLocation.getLongitude(), eLocation.getLatitude() + 10, eLocation.getLongitude());
+                    Utils.startNavigationActivity(DetailScheduleActivity.this, mLocation.getLatitude(), mLocation.getLongitude(), latlng.latitude, latlng.longitude);
                 }
                 /*Location location = FusedLocationApi.getLastLocation(mGoogleApiClient);
                 mLocation = location;

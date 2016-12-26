@@ -138,6 +138,13 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         editText_title = (EditText) fl.findViewById(R.id.edittext_title);
         editText_cost = (EditText) fl.findViewById(R.id.edittext_cost);
         textView_location = (TextView) fl.findViewById(R.id.textview_location);
+        textView_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), MapsActivity.class);
+                startActivityForResult(intent, REQUEST_LOCATION);
+            }
+        });
         textView_dateStart = (TextView) fl.findViewById(R.id.textview_startdate);
         textView_dateEnd = (TextView) fl.findViewById(R.id.textview_enddate);
         textView_timeStart = (TextView) fl.findViewById(R.id.textview_starttime);

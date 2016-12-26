@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
@@ -343,6 +344,7 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                     long count_activity = dataSnapshot.child("users").child(uid).child("activtys").getChildrenCount();
                     Log.e("count_activity", "count_activity" + count_activity);
                     userDatabase.child("activtys").child((count_activity + 1) + "").child("uid").setValue((count + 1) + "");
+                    Toast.makeText(AddScheduleActivity.this, "新增成功.", Toast.LENGTH_LONG);
                 }
             }
 

@@ -153,12 +153,7 @@ public class ContentFragment extends Fragment {
                 String end = getDate(Long.parseLong(ds.child("time").child("end").getValue().toString()), "yyyy年 MM月 dd日 hh點mm分");
                 textView_time.setText(begin + "\n到\n" + end);
                 textView_creator.setText(creator);
-                textView_creator.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        DownloadImage();
-                    }
-                });
+
                 DownloadImage();
                 Log.d("Content", "title = " + title + " creator = " + creator + " content = " + content);
             }
