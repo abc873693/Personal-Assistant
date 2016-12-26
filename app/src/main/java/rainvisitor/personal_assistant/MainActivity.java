@@ -26,8 +26,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.MediaType;
@@ -199,10 +197,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_schedule:
                 changeContent(2);
                 break;
-            case R.id.nav_money_management:
-                changeContent(3);
+            case R.id.nav_home:
+                changeContent(0);
                 break;
-            case R.id.nav_restaurant:
+            case R.id.nav_map:
                 changeContent(4);
                 break;
             case R.id.nav_setting:
@@ -224,37 +222,22 @@ public class MainActivity extends AppCompatActivity
         switch (position) {
             case 0:
                 fragment = new StartFragment().newInstance();
+                fab.setVisibility(View.GONE);
                 break;
             case 1:
                 fragment = new NotesFragment().newInstance("記事");
+                fab.setVisibility(View.GONE);
                 break;
             case 2:
                 fragment = new SchedulesFragment().newInstance("行程", "");
+                fab.setVisibility(View.VISIBLE);
                 fab.setImageResource(R.drawable.ic_add_black);
                 fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.blue_500)));
                 break;
-            case 3:
-                fragment = new MoneyFragment().newInstance("金錢管理", "");
-                break;
             case 4:
-                fragment = new RestaurantFragment().newInstance("找餐廳", "");
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null) {
-                    // Name, email address, and profile photo Url
-                    String name = user.getDisplayName();
-                    String email = user.getEmail();
-                    Uri photoUrl = user.getPhotoUrl();
-
-                    // The user's ID, unique to the Firebase project. Do NOT use this value to
-                    // authenticate with your backend server, if you have one. Use
-                    // FirebaseUser.getToken() instead.
-                    String uid = user.getUid();
-                    Log.e("getCurrentUser","uid = "  + uid +"  name = "  + name +"  email = "  + email +"  photoUrl = "  + photoUrl );
-                }
-                FirebaseAuth.getInstance().signOut();
-                SP_Service sp_service = new SP_Service(MainActivity.this);
-                sp_service.ClearUserData();
-                startActivity(new Intent().setClass(MainActivity.this, MapsActivity.class));
+                fragment = new RestaurantFragment().newInstance("找活動", "");
+                fab.setVisibility(View.GONE);
+                //startActivity(new Intent().setClass(MainActivity.this, MapsActivity.class));
                 break;
             default:
 

@@ -111,4 +111,8 @@
     <string name="action_taxi">action taxi</string>
     <string name="action_change_colors">change style</string>
     <string name="hint_cost">Please enter Cost</string>
+    <string name="nav_all_activity">All Activity</string>
+    <string name="nav_map">map</string>
+    <string name="nav_personal_data">Personal Data</string>
+    <string name="nav_home">Home</string>
 </resources>

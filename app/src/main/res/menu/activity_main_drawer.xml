@@ -3,21 +3,21 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="@string/nav_home" />
+        <item
             android:id="@+id/nav_note"
-            android:icon="@drawable/ic_assignment_black"
-            android:title="@string/title_note" />
+            android:icon="@drawable/ic_language_black_24dp"
+            android:title="@string/nav_all_activity" />
         <item
             android:id="@+id/nav_schedule"
             android:icon="@drawable/ic_perm_contact_calendar_black"
             android:title="@string/title_schedule" />
         <item
-            android:id="@+id/nav_money_management"
-            android:icon="@drawable/ic_euro_symbol_black"
-            android:title="@string/title_money_management" />
-        <item
-            android:id="@+id/nav_restaurant"
-            android:icon="@drawable/ic_restaurant_black"
-            android:title="@string/title_restaurant" />
+            android:id="@+id/nav_map"
+            android:icon="@drawable/ic_near_me"
+            android:title="@string/nav_map" />
     </group>
 
     <item android:title="@string/title_else">

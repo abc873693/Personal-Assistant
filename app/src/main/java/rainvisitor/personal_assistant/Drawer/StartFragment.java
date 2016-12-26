@@ -19,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import rainvisitor.personal_assistant.MainActivity;
 import rainvisitor.personal_assistant.R;
+import rainvisitor.personal_assistant.SettingActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,18 +78,19 @@ public class StartFragment extends Fragment {
                 mainActivity.changeContent(2);
             }
         });
-        view.findViewById(R.id.layout_money).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mainActivity.changeContent(3);
-            }
-        });
         view.findViewById(R.id.layout_restaurants).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mainActivity.changeContent(4);
             }
         });
+        view.findViewById(R.id.layout_setting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent().setClass(getActivity(), SettingActivity.class));
+            }
+        });
+
         textView_version = (TextView) view.findViewById(R.id.text_version);
         getFirebaseDatabse();
         return view;

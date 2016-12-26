@@ -10,9 +10,9 @@
 
     <LinearLayout
         android:id="@+id/bottom_wrapper"
-        android:layout_width="240dp"
+        android:layout_width="120dp"
         android:layout_height="match_parent"
-        android:weightSum="3">
+        android:weightSum="1">
 
         <TextView
             android:id="@+id/tvSee"
@@ -22,26 +22,6 @@
             android:background="@color/green_400"
             android:gravity="center"
             android:text="@string/see"
-            android:textColor="@color/black" />
-
-        <TextView
-            android:id="@+id/tvEdit"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/blue_400"
-            android:gravity="center"
-            android:text="@string/edit"
-            android:textColor="@color/black" />
-
-        <TextView
-            android:id="@+id/tvDelete"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/red_400"
-            android:gravity="center"
-            android:text="@string/delete"
             android:textColor="@color/black" />
     </LinearLayout>
 

@@ -1,13 +1,17 @@
 package rainvisitor.personal_assistant.Drawer;
 
+import android.app.Fragment;
 import android.content.Context;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.FrameLayout;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 
 import rainvisitor.personal_assistant.R;
 
@@ -24,6 +28,12 @@ public class RestaurantFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private GoogleMap mMap;
+    private Location mLocation;
+    private FrameLayout frameLayout;
+    private LatLng Slect_LatLng;
+    private String Slect_Name;
+    private Boolean Slect = false;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -66,9 +76,9 @@ public class RestaurantFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_restaurant, container, false);
-
-        TextView textView = (TextView) view.findViewById(R.id.textView);
-        textView.setText(mParam1);
+       /* SupportMapFragment mapFragment = (SupportMapFragment) view.getSupportFragmentManager()
+                .findFragmentById(R.id.map);*/
+        frameLayout = (FrameLayout) view.findViewById(R.id.map);
         // Inflate the layout for this fragment
         return view;
     }

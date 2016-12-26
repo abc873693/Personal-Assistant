@@ -263,7 +263,7 @@ public class MainFragment extends Fragment {
                     detailScheduleActivity.changeContent(DetailScheduleActivity.FRAGMENT.content);
                 }
             });
-            holder.textView_edit.setOnClickListener(new View.OnClickListener() {
+            /*holder.textView_edit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
@@ -274,7 +274,7 @@ public class MainFragment extends Fragment {
                 public void onClick(View view) {
 
                 }
-            });
+            });*/
         }
 
         class ContactViewHolder extends RecyclerView.ViewHolder {
@@ -294,8 +294,8 @@ public class MainFragment extends Fragment {
                 textView_content = (TextView) convertView.findViewById(R.id.textView_content);
                 swipeLayout = (SwipeLayout) convertView.findViewById(R.id.swipeLayout);
                 textView_see = (TextView) convertView.findViewById(R.id.tvSee);
-                textView_edit = (TextView) convertView.findViewById(R.id.tvEdit);
-                textView_delete = (TextView) convertView.findViewById(R.id.tvDelete);
+                /*textView_edit = (TextView) convertView.findViewById(R.id.tvEdit);
+                textView_delete = (TextView) convertView.findViewById(R.id.tvDelete);*/
                 textView_date = (TextView) convertView.findViewById(R.id.textView_date);
                 swipeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override

@@ -5,7 +5,7 @@
     <string name="navigation_drawer_close">關閉導覽</string>
     <string name="navigation_drawer_open">開啟導覽</string>
     <string name="title_note">記事</string>
-    <string name="title_schedule">行程</string>
+    <string name="title_schedule">我的活動</string>
     <string name="title_restaurant">找餐廳</string>
     <string name="title_money_management">金錢管理</string>
     <string name="title_else">其他</string>
@@ -29,4 +29,8 @@
     <string name="see">查看</string>
     <string name="edit">編輯</string>
     <string name="hint_cost">請輸入花費</string>
+    <string name="nav_all_activity">所有活動</string>
+    <string name="nav_map">地圖找活動</string>
+    <string name="nav_personal_data">個人資料</string>
+    <string name="nav_home">首頁</string>
 </resources>
