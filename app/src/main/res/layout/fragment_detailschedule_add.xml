@@ -275,12 +275,15 @@
             android:id="@+id/recycleview_picture"
             android:layout_width="match_parent"
             android:scrollbars="horizontal"
-            android:layout_height="100dp" />
+            android:layout_height="100dp"
+            android:visibility="gone"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"/>
         <Button
             android:id="@+id/btn_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
+            android:layout_gravity="center"
             android:text="@string/add" />
     </LinearLayout>
 </FrameLayout>
