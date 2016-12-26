@@ -1,5 +1,7 @@
 package rainvisitor.personal_assistant.Models;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by Ray on 2016/12/23.
  */
@@ -11,6 +13,7 @@ public class AllScheduleModel {
     public String content;
     public String location;
     public String creator;
-    public Boolean join=false;
+    public Boolean join = false;
     public String num;
+    public LatLng latLng = null;
 }

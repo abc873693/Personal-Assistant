@@ -17,6 +17,8 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +34,7 @@ import rainvisitor.personal_assistant.R;
 public class Utils {
     public static int REQUEST_LOCATION = 9487;
     public static int RESULT_LOCATION = 87;
+
     public static boolean isNetworkConnected(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -39,7 +42,7 @@ public class Utils {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    public static void openCustomTabs(Context context , Resources resources, String url){
+    public static void openCustomTabs(Context context, Resources resources, String url) {
         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
         Bitmap icon = BitmapFactory
                 .decodeResource(resources, R.drawable.ic_menu_share);
@@ -57,7 +60,6 @@ public class Utils {
         sendIntent.setType("text/plain");
         return PendingIntent.getActivity(context, 0, sendIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
-
 
 
     public static Drawable getSelectableItemBackgroundDrawable(Context context) {
@@ -135,5 +137,13 @@ public class Utils {
         String state = os.toString();
         os.close();
         return state;
+    }
+
+    public static boolean isNear(LatLng a, LatLng b) {
+        Double pa = 0.025;
+        if (Math.sqrt(Math.pow(a.latitude - b.latitude, 2.0) + Math.pow(a.longitude - b.longitude, 2.0)) <= pa) {
+            return true;
+        }
+        else return false;
     }
 }

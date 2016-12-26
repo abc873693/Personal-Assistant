@@ -1,6 +1,7 @@
 package rainvisitor.personal_assistant;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -246,7 +247,12 @@ public class MainActivity extends AppCompatActivity
         if (fragment != null) {
             FragmentTransaction fragTrans = getFragmentManager().beginTransaction();
             fragTrans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            fragTrans.replace(R.id.content_main, fragment);
+            FragmentManager fragmentManager = getFragmentManager();
+            Fragment currentFragment = fragmentManager.findFragmentByTag(CurrentFragment+"");
+            if (currentFragment != null) {
+                fragTrans.remove(currentFragment);
+            }
+            fragTrans.replace(R.id.content_main, fragment, position+"");
             fragTrans.commit();
         }
     }
