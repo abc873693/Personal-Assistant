@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,9 +50,12 @@ import java.util.Calendar;
 import java.util.List;
 
 import rainvisitor.personal_assistant.DetailScheduleActivity;
+import rainvisitor.personal_assistant.MapsActivity;
 import rainvisitor.personal_assistant.R;
 
 import static android.app.Activity.RESULT_OK;
+import static rainvisitor.personal_assistant.libs.Utils.REQUEST_LOCATION;
+import static rainvisitor.personal_assistant.libs.Utils.RESULT_LOCATION;
 
 public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     // TODO: Rename parameter arguments, choose names that match
@@ -61,7 +65,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     private static final int Pick_Image_Request = 33;
     //Todo: New Items
     private FrameLayout fl;
-    private EditText editText_title;
+    private EditText editText_title, editText_cost, editText_content;
     private TextView textView_location, textView_dateStart, textView_dateEnd, textView_timeStart, textView_timeEnd;
     private ImageView imageView_addPicture;
 
@@ -73,7 +77,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     private LinearLayout linearLayout;
     private Calendar now, start, end, temp;
     private int current_date = 0, current_time = 0;
-
+    private LatLng latLng = null;
     private String sdatestring, edatestring, stimestring, etimestring;
     private long stimestamp, etimestamp;
 
@@ -130,7 +134,9 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
 
 
         fl = (FrameLayout) inflater.inflate(R.layout.fragment_detailschedule_add, container, false);
+        editText_content = (EditText) fl.findViewById(R.id.edittext_content);
         editText_title = (EditText) fl.findViewById(R.id.edittext_title);
+        editText_cost = (EditText) fl.findViewById(R.id.edittext_cost);
         textView_location = (TextView) fl.findViewById(R.id.textview_location);
         textView_dateStart = (TextView) fl.findViewById(R.id.textview_startdate);
         textView_dateEnd = (TextView) fl.findViewById(R.id.textview_enddate);
@@ -210,8 +216,13 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
             }
         });
 
-
-
+        textView_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, MapsActivity.class);
+                startActivityForResult(intent, REQUEST_LOCATION);
+            }
+        });
         //Todo: RecycleView
 
         context = fl.getContext();
@@ -256,6 +267,16 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_LOCATION) {
+            if (resultCode == RESULT_LOCATION) {
+                Double Longitude = data.getDoubleExtra("Longitude", 0);
+                Double Latitude = data.getDoubleExtra("Latitude", 0);
+                String Name = data.getStringExtra("Name");
+                textView_location.setText(Name);
+                latLng = new LatLng(Latitude, Longitude);
+                Log.e("Location", "Name  = " + Name + " Longitude  = " + Longitude + " Latitude  = " + Latitude);
+            }
+        }
         if (requestCode == Pick_Image_Request && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
             uriArray.add(uri);
@@ -273,45 +294,45 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         }
     }
 
-    private void UploadImage(){
-    for(int i = 0;i < uriArray.size();i++) {
-        if (uriArray.get(i) != null) {
+    private void UploadImage() {
+        for (int i = 0; i < uriArray.size(); i++) {
+            if (uriArray.get(i) != null) {
 
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-            final ProgressDialog progressDialog = new ProgressDialog(fl.getContext());
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
+                final ProgressDialog progressDialog = new ProgressDialog(fl.getContext());
+                progressDialog.setTitle("Uploading...");
+                progressDialog.show();
 
-            StorageReference riversRef = mStorageRef.child(user.getUid() + "/event" + start.getTimeInMillis() + "Picture" + i);
+                StorageReference riversRef = mStorageRef.child(user.getUid() + "/event" + start.getTimeInMillis() + "Picture" + i);
 
-            riversRef.putFile(uriArray.get(i))
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Toast.makeText(fl.getContext(), "Image Uploaded.", Toast.LENGTH_LONG);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(fl.getContext(), exception.getMessage(), Toast.LENGTH_LONG);
+                riversRef.putFile(uriArray.get(i))
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                progressDialog.dismiss();
+                                Toast.makeText(fl.getContext(), "Image Uploaded.", Toast.LENGTH_LONG);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                Toast.makeText(fl.getContext(), exception.getMessage(), Toast.LENGTH_LONG);
 
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred());
-                            progressDialog.setMessage((int) (progress + 0.5) + "% Uploaded...");
-                        }
-                    })
-            ;
-        } else {
-            Toast.makeText(fl.getContext(), "Error Happened！", Toast.LENGTH_LONG);
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                double progress = (100.0 * taskSnapshot.getBytesTransferred());
+                                progressDialog.setMessage((int) (progress + 0.5) + "% Uploaded...");
+                            }
+                        })
+                ;
+            } else {
+                Toast.makeText(fl.getContext(), "Error Happened！", Toast.LENGTH_LONG);
+            }
         }
-    }
     }
 
     @Override
@@ -467,7 +488,8 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (textView_location.getText().toString().equals("") || editText_title.getText().toString().equals("") ||
                         textView_dateStart.getText().toString().equals("") || textView_timeStart.getText().toString().equals("") ||
-                        textView_dateEnd.getText().toString().equals("") || textView_timeEnd.getText().toString().equals("")) {
+                        textView_dateEnd.getText().toString().equals("") || textView_timeEnd.getText().toString().equals("")
+                        || editText_cost.getText().toString().equals("") || editText_content.getText().toString().equals("")) {
 
                     final Snackbar snackbar = Snackbar
                             .make(linearLayout, "請勿留空", Snackbar.LENGTH_INDEFINITE)
@@ -497,11 +519,12 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                     String UID = detailScheduleActivity.current_activity_uid;
                     DatabaseReference mDatabase = dataSnapshot.child("activity").child(UID).child("activity_child").getRef();
                     count = dataSnapshot.child("activity").child(UID).child("activity_child").getChildrenCount();
-                    Log.e("count",count+"123");
+                    Log.e("count", count + "123");
                     DatabaseReference dr = mDatabase.child((count) + "").getRef();
                     dr.child("creator").setValue(user.getDisplayName());
                     dr.child("title").setValue(editText_title.getText() + "");
-                    dr.child("content").setValue("內容");
+                    dr.child("cost").setValue(editText_cost.getText() + "");
+                    dr.child("content").setValue(editText_content.getText() + "");
                     dr.child("time").child("begin").setValue(start.getTimeInMillis());
                     dr.child("time").child("end").setValue(end.getTimeInMillis());
                     dr.child("imagecount").setValue(images.size());

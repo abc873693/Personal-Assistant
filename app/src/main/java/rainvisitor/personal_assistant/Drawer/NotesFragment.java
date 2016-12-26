@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -136,6 +137,7 @@ public class NotesFragment extends Fragment {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Toast.makeText(context, "Fetching Data...", Toast.LENGTH_LONG);
                 lists.clear();
                 for (DataSnapshot ds : dataSnapshot.child("activity").getChildren()) {
                     AllScheduleModel model = new AllScheduleModel();

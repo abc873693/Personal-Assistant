@@ -28,4 +28,5 @@
     <string name="delete">刪除</string>
     <string name="see">查看</string>
     <string name="edit">編輯</string>
+    <string name="hint_cost">請輸入花費</string>
 </resources>
