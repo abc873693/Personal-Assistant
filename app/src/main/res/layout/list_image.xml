@@ -8,17 +8,19 @@
         android:layout_width="5dp"
         android:layout_height="90dp"/>
     <ImageView
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:layout_width="90dp"
-        android:layout_height="90dp"
+        android:layout_height="100dp"
         app:srcCompat="@color/amber_500"
         android:id="@+id/list_image"
         android:scaleType="fitCenter"/>
     <View
         android:layout_width="5dp"
-        android:layout_height="90dp"/>
+        android:layout_height="100dp"/>
     <View
         android:layout_width="1dp"
-        android:layout_height="90dp"
+        android:layout_height="100dp"
         android:background="@color/grey_400"
         />
 </LinearLayout>

@@ -9,7 +9,7 @@
     tools:context="rainvisitor.personal_assistant.StartActivity">
 
     <TextView
-        android:text="使用Ｇｏｏｇｌｅ帳號登入．．．"
+        android:text="使用Ｇｏｏｇｌｅ帳號登入..."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView_googlehint"

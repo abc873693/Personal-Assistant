@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -226,8 +228,22 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         textView_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, MapsActivity.class);
-                startActivityForResult(intent, REQUEST_LOCATION);
+                String s[] = {"在地圖選擇", "自己命名"};
+                new AlertDialog.Builder(context)
+                        .setTitle("請選擇位置")
+                        .setItems(s, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(which==0){
+                                    Intent intent = new Intent(context, MapsActivity.class);
+                                    startActivityForResult(intent, REQUEST_LOCATION);
+                                }
+                                else{
+                                    showEditDialog();
+                                }
+                            }
+                        })
+                        .show();
             }
         });
         //Todo: RecycleView
@@ -244,7 +260,6 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
             @Override
             public void onClick(View view) {
                 addSchedule();
-                UploadImage();
             }
         });
         //Todo: 選取相片
@@ -269,6 +284,22 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
         return fl;
     }
 
+    private void showEditDialog(){
+        final View item = LayoutInflater.from(context).inflate(R.layout.item_layout, null);
+        new AlertDialog.Builder(context)
+                .setTitle("請輸入名稱")
+                .setView(item)
+                .setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText editText = (EditText) item.findViewById(R.id.editText);
+                        if(!editText.getText().toString().equals("")){
+                            textView_location.setText(editText.getText());
+                        }
+                    }
+                })
+                .show();
+    }
 
     //TODO: 回傳相片
     @Override
@@ -285,6 +316,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
             }
         }
         if (requestCode == Pick_Image_Request && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            recyclerView.setVisibility(View.VISIBLE);
             Uri uri = data.getData();
             uriArray.add(uri);
             Log.e("uri", uri.toString());
@@ -508,6 +540,7 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                             });
                     snackbar.show();
                 } else {
+                    UploadImage();
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     String uid;
                     if (user != null) {
@@ -530,6 +563,11 @@ public class AddFragment extends Fragment implements DatePickerDialog.OnDateSetL
                     DatabaseReference dr = mDatabase.child((count) + "").getRef();
                     if(textView_location.getText().equals("請選擇位置")){
                         dr.child("location").child("name").setValue("沒有位置");
+                        dr.child("location").child("Longitude").setValue(0);
+                        dr.child("location").child("Latitude").setValue(0);
+                        dr.child("location").child("enabled").setValue(false);
+                    }else if(latLng == null){
+                        dr.child("location").child("name").setValue(textView_location.getText());
                         dr.child("location").child("Longitude").setValue(0);
                         dr.child("location").child("Latitude").setValue(0);
                         dr.child("location").child("enabled").setValue(false);

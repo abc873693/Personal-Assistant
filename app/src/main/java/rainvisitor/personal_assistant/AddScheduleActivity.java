@@ -359,10 +359,14 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                     Log.e("count", count + "");
                     DatabaseReference dr = mDatabase.child((count + 1) + "").getRef();
                     if (textView_location.getText().equals("請選擇位置")) {
-                        dr.child("location").child("name").setValue("");
+                        dr.child("location").child("name").setValue("沒有位置");
+                        dr.child("location").child("Longitude").setValue(0);
+                        dr.child("location").child("Latitude").setValue(0);
                         dr.child("location").child("enabled").setValue(false);
                     }else if(latLng == null){
                         dr.child("location").child("name").setValue(textView_location.getText());
+                        dr.child("location").child("Longitude").setValue(0);
+                        dr.child("location").child("Latitude").setValue(0);
                         dr.child("location").child("enabled").setValue(false);
                     }
                     else {
