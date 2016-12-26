@@ -8,6 +8,52 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="rainvisitor.personal_assistant.SettingActivity">
-
+    tools:context="rainvisitor.personal_assistant.SettingActivity"
+    android:background="@color/grey_100">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_400"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:paddingBottom="20dp"
+            android:paddingTop="20dp"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:id="@+id/user_photo"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_400"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textSize="30dp"
+            android:text="Name"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:id="@+id/ueser_name"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_400"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textSize="20dp"
+            android:text="Mail"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:id="@+id/user_mail"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_400"/>
+    </LinearLayout>
 </RelativeLayout>
