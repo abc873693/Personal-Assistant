@@ -1,6 +1,7 @@
 package rainvisitor.personal_assistant;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -10,9 +11,12 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
@@ -107,13 +111,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void SendData() {
         if (Slect) {
-            Intent resultIntent = new Intent();
-            // TODO Add extras or a data URI to this intent as appropriate.
-            resultIntent.putExtra("Longitude", Slect_LatLng.longitude);
-            resultIntent.putExtra("Latitude", Slect_LatLng.latitude);
-            resultIntent.putExtra("Name", Slect_Name);
-            setResult(Utils.RESULT_LOCATION, resultIntent);
-            finish();
+            String message = "名稱:" + Slect_Name + "\n" +
+                    "經度:" + Slect_LatLng.longitude + "\n" +
+                    "緯度:" + Slect_LatLng.latitude ;
+            new AlertDialog.Builder(MapsActivity.this)
+                    .setTitle("您選取的位置")
+                    .setMessage(message)
+                    .setPositiveButton("好", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("Longitude", Slect_LatLng.longitude);
+                            resultIntent.putExtra("Latitude", Slect_LatLng.latitude);
+                            resultIntent.putExtra("Name", Slect_Name);
+                            setResult(Utils.RESULT_LOCATION, resultIntent);
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("編輯名稱", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            showEditDialog();
+                        }
+                    })
+                    .show();
+
         } else {
             final Snackbar snackbar = Snackbar
                     .make(relateLayout, "請選取一個紅標", Snackbar.LENGTH_INDEFINITE)
@@ -127,6 +149,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    private void showEditDialog(){
+        final View item = LayoutInflater.from(MapsActivity.this).inflate(R.layout.item_layout, null);
+        new AlertDialog.Builder(MapsActivity.this)
+                .setTitle("請輸入名稱")
+                .setView(item)
+                .setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText editText = (EditText) item.findViewById(R.id.editText);
+                        if(!editText.getText().toString().equals("")){
+                            Slect_Name = editText.getText().toString();
+                        }
+                        SendData();
+                    }
+                })
+                .show();
+    }
 
     protected void search(List<Address> addresses) {
         Address address = (Address) addresses.get(0);
@@ -175,7 +214,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         } else {
             try {
-                GetMyLocation();
+                //GetMyLocation();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -195,7 +234,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
                 final Snackbar snackbar = Snackbar
-                        .make(relateLayout, point.toString(), Snackbar.LENGTH_INDEFINITE)
+                        .make(relateLayout, Slect_Name, Snackbar.LENGTH_INDEFINITE)
                         .setAction("確定", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

@@ -1,12 +1,15 @@
 package rainvisitor.personal_assistant;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -121,10 +124,41 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
         textView_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AddScheduleActivity.this, MapsActivity.class);
-                startActivityForResult(intent, REQUEST_LOCATION);
+                String s[] = {"在地圖選擇", "自己命名"};
+                new AlertDialog.Builder(AddScheduleActivity.this)
+                        .setTitle("請選擇位置")
+                        .setItems(s, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(which==0){
+                                    Intent intent = new Intent(AddScheduleActivity.this, MapsActivity.class);
+                                    startActivityForResult(intent, REQUEST_LOCATION);
+                                }
+                                else{
+                                    showEditDialog();
+                                }
+                            }
+                        })
+                        .show();
             }
         });
+    }
+
+    private void showEditDialog(){
+        final View item = LayoutInflater.from(AddScheduleActivity.this).inflate(R.layout.item_layout, null);
+        new AlertDialog.Builder(AddScheduleActivity.this)
+                .setTitle("請輸入名稱")
+                .setView(item)
+                .setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText editText = (EditText) item.findViewById(R.id.editText);
+                        if(!editText.getText().toString().equals("")){
+                            textView_location.setText(editText.getText());
+                        }
+                    }
+                })
+                .show();
     }
 
     private void initView() {
@@ -324,11 +358,10 @@ public class AddScheduleActivity extends AppCompatActivity implements DatePicker
                     count = dataSnapshot.child("activity").getChildrenCount();
                     Log.e("count", count + "");
                     DatabaseReference dr = mDatabase.child((count + 1) + "").getRef();
-                    if(textView_location.getText().equals("請選擇位置")){
+                    if (textView_location.getText().equals("請選擇位置")) {
                         dr.child("location").child("name").setValue("");
                         dr.child("location").child("enabled").setValue(false);
-                    }
-                    else {
+                    } else {
                         dr.child("location").child("name").setValue(textView_location.getText());
                         dr.child("location").child("Longitude").setValue(latLng.longitude);
                         dr.child("location").child("Latitude").setValue(latLng.latitude);

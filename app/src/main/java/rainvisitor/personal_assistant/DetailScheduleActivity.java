@@ -298,10 +298,12 @@ public class DetailScheduleActivity extends AppCompatActivity implements
                 ViewCompat.setNestedScrollingEnabled(nestedScrollView, true);
                 menuItem_add.setVisible(true);
                 menuItem_share.setVisible(true);
+                fab.setVisibility(View.VISIBLE);
                 break;
             case content:
                 fragment = new ContentFragment().newInstance();
                 toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white);
+                fab.setVisibility(View.VISIBLE);
                 break;
             case add:
                 fragment = new AddFragment().newInstance();
@@ -310,6 +312,7 @@ public class DetailScheduleActivity extends AppCompatActivity implements
                 ViewCompat.setNestedScrollingEnabled(nestedScrollView, false);
                 menuItem_add.setVisible(false);
                 menuItem_share.setVisible(false);
+                fab.setVisibility(View.GONE);
                 break;
             default:
 
