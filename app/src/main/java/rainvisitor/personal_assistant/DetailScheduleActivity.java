@@ -41,6 +41,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import rainvisitor.personal_assistant.DetailScheduleFragmet.AddFragment;
 import rainvisitor.personal_assistant.DetailScheduleFragmet.ContentFragment;
 import rainvisitor.personal_assistant.DetailScheduleFragmet.MainFragment;
@@ -74,6 +77,7 @@ public class DetailScheduleActivity extends AppCompatActivity implements
     public String current_schedule_uid;
     public Location mLocation;
     public Location eLocation;
+    public  String str_share;
     private FloatingActionButton fab;
     private GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
@@ -96,7 +100,6 @@ public class DetailScheduleActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mStorageRef = FirebaseStorage.getInstance().getReference();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
@@ -104,7 +107,16 @@ public class DetailScheduleActivity extends AppCompatActivity implements
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                str_share = "你好，我在 ";
                 DataSnapshot ds = dataSnapshot.child("activity").child(current_activity_uid);
+                Long date_begin = Long.parseLong(ds.child("time").child("begin").getValue().toString());
+                str_share+= getDate(date_begin,"yyyy年 MM月 dd日 hh點mm分 ");
+                str_share += "有個 \"";
+                str_share += ds.child("title").getValue().toString();
+                str_share += "\" 的活動，歡迎來找我！\n";
+                str_share += "地點在： ";
+                str_share += ds.child("location").child("name").getValue().toString();
+                ds = dataSnapshot.child("activity").child(current_activity_uid);
                 Double Lat = Double.parseDouble(ds.child("location").child("Latitude").getValue().toString());
                 Double Lng = Double.parseDouble(ds.child("location").child("Longitude").getValue().toString());
                 latlng = new LatLng(Lat, Lng);
@@ -163,6 +175,16 @@ public class DetailScheduleActivity extends AppCompatActivity implements
         }
     }
 
+    private static String getDate(long milliSeconds, String dateFormat) {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
+
     private void initToolbar() {
         toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
         // Inflate a menu to be displayed in the toolbar
@@ -174,7 +196,6 @@ public class DetailScheduleActivity extends AppCompatActivity implements
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_share:
-                        String str_share = "安安你好";
                         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
                         sharingIntent.putExtra(Intent.EXTRA_TEXT, str_share);

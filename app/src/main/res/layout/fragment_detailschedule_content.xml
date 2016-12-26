@@ -56,12 +56,36 @@
             android:layout_height="1dp"
             android:layout_gravity="center"
             android:background="@color/grey_400" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/grey_100">
+            <TextView
+                android:id="@+id/textview_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/grey_100"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:gravity="center"
+                android:hint="@string/hint_location"
+                android:paddingEnd="10dp"
+                android:paddingStart="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="18sp"
+                tools:text="地點" />
+        </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="center"
+            android:background="@color/grey_400" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/grey_100">
             <TextView
                 android:id="@+id/textview_content"
                 android:layout_width="match_parent"
