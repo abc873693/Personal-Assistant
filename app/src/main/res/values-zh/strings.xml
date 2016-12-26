@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">個人助理</string>
-    <string name="action_settings">設定</string>
+    <string name="app_name">個人活動助理</string>
+    <string name="action_settings">個人資料</string>
     <string name="navigation_drawer_close">關閉導覽</string>
     <string name="navigation_drawer_open">開啟導覽</string>
     <string name="title_note">記事</string>

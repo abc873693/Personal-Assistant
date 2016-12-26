@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="3"
-                android:src="@drawable/ic_language_black_24dp"
+                android:src="@drawable/ic_group_black_24dp"
                 android:id="@+id/imageView4" />
 
             <TextView
@@ -127,7 +127,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="3"
-                        android:src="@drawable/ic_settings_black" />
+                        android:src="@drawable/ic_person_black_24dp" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
