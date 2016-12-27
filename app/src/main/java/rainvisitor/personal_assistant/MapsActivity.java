@@ -106,14 +106,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         Slect_LatLng = sydney;
-        Slect_Name ="您的位置";
+        Slect_Name = "您的位置";
     }
 
     private void SendData() {
         if (Slect) {
             String message = "名稱:" + Slect_Name + "\n" +
                     "經度:" + Slect_LatLng.longitude + "\n" +
-                    "緯度:" + Slect_LatLng.latitude ;
+                    "緯度:" + Slect_LatLng.latitude;
             new AlertDialog.Builder(MapsActivity.this)
                     .setTitle("您選取的位置")
                     .setMessage(message)
@@ -149,7 +149,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void showEditDialog(){
+    private void showEditDialog() {
         final View item = LayoutInflater.from(MapsActivity.this).inflate(R.layout.item_layout, null);
         new AlertDialog.Builder(MapsActivity.this)
                 .setTitle("請輸入名稱")
@@ -158,7 +158,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         EditText editText = (EditText) item.findViewById(R.id.editText);
-                        if(!editText.getText().toString().equals("")){
+                        if (!editText.getText().toString().equals("")) {
                             Slect_Name = editText.getText().toString();
                         }
                         SendData();
@@ -180,7 +180,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title(addressText);
-
+        Slect = true;
         mMap.clear();
         mMap.addMarker(markerOptions);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -229,7 +229,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 markerOptions.position(point);
                 markerOptions.title("您選取的位置");
                 Slect_LatLng = point;
-                Slect_Name ="您選取的位置";
+                Slect_Name = "您選取的位置";
                 mMap.addMarker(markerOptions);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(point));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(15));

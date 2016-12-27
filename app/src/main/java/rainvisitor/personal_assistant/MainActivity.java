@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity
 
     public void changeContent(int position) {
         Fragment fragment = null;
-        CurrentFragment = position;
+
         switch (position) {
             case 0:
                 fragment = new StartFragment().newInstance();
@@ -255,6 +255,7 @@ public class MainActivity extends AppCompatActivity
             fragTrans.replace(R.id.content_main, fragment, position+"");
             fragTrans.commit();
         }
+        CurrentFragment = position;
     }
 
     @Override
